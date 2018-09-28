@@ -7,9 +7,16 @@ namespace Quack.File
 		public string Sanitize(string input)
 		{
 			var output = input;
+			output = SeperateStatementEnds(output);
 			output = RemoveNewLines(output);
 			output = ReduceWhitespace(output);
+			output = TrimWhiteSpace(output);
 			return output;
+		}
+
+		private static string SeperateStatementEnds(string input)
+		{
+			return Regex.Replace(input, @";", " ; ");
 		}
 
 		private static string RemoveNewLines(string input)
@@ -19,9 +26,14 @@ namespace Quack.File
 
 		private static string ReduceWhitespace(string input)
 		{
-			RegexOptions options = RegexOptions.None;
-			Regex regex = new Regex("[ ]{2,}", options);
+			var options = RegexOptions.None;
+			var regex = new Regex("[ ]{2,}", options);
 			return regex.Replace(input, " ");
+		}
+
+		private static string TrimWhiteSpace(string input)
+		{
+			return input.Trim();
 		}
 	}
 }

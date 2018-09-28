@@ -63,11 +63,36 @@ namespace Quack.Transpiler
 		private void Assign(AstNode node)
 		{
 			var target = node.Children.First().Value;
-			var value  = node.Children.ElementAt(1).Value;
 			_output.Append(target);
-			_output.Append(" = ");
-			_output.Append(value);
+			_output.Append(" =");
+
+			var valueNode  = node.Children.ElementAt(1);
+			if (valueNode.Type == TokenType.ARITHMETIC_OPERATOR)
+			{
+				ArithmeticOperation(valueNode);
+			}
+			else
+			{
+				_output.Append(" " + valueNode.Value);
+
+			}
+
 			StatementEnd();
+		}
+
+		private void ArithmeticOperation(AstNode node)
+		{
+			_output.Append(" " + node.Children.First().Value);
+			_output.Append($" {node.Value}");
+			var rightValue = node.Children.ElementAt(1);
+			if (rightValue.Type == TokenType.ARITHMETIC_OPERATOR)
+			{
+				ArithmeticOperation(rightValue);
+			}
+			else
+			{
+				_output.Append(" " + rightValue.Value);
+			}
 		}
 
 		private void StatementEnd()

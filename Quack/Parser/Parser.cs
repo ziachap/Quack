@@ -76,14 +76,23 @@ namespace Quack.Parser
 
 			var assignmentTarget = tokens.Dequeue();
 			AssertTypeOrThrow(assignmentTarget, TokenType.LABEL);
+			assignNode.Children.Add(Label(assignmentTarget));
 
 			var assignmentOperator = tokens.Dequeue();
 			AssertTypeOrThrow(assignmentOperator, TokenType.ASSIGN);
-
+			
 			var valueToken = tokens.Dequeue();
 
-			assignNode.Children.Add(Label(assignmentTarget));
-			assignNode.Children.Add(LabelOrConstant(valueToken));
+			// lookahead for arithmetic operator
+			if (tokens.First().Type == TokenType.ARITHMETIC_OPERATOR)
+			{
+				assignNode.Children.Add(ArithmeticOperation(tokens, valueToken));
+			}
+			else
+			{
+				assignNode.Children.Add(LabelOrConstant(valueToken));
+			}
+
 
 			return new StatementParseResult(assignNode, tokens);
 		}
@@ -101,6 +110,29 @@ namespace Quack.Parser
 			printNode.Children.Add(valueNode);
 
 			return new StatementParseResult(printNode, tokens);
+		}
+
+		private AstNode ArithmeticOperation(Queue<Token> tokens, Token previousTerm)
+		{
+			var arithmeticOperator = tokens.Dequeue();
+			var nextTerm = tokens.Dequeue();
+
+			// lookahead for further arithmetic operations
+			if (tokens.First().Type == TokenType.ARITHMETIC_OPERATOR)
+			{
+				var leftNode = LabelOrConstant(previousTerm);
+				var rightNode = ArithmeticOperation(tokens, nextTerm);
+				var children = new List<AstNode> { leftNode, rightNode };
+				return new AstNode(TokenType.ARITHMETIC_OPERATOR, arithmeticOperator.Value, children);
+			}
+			else
+			{
+				var leftNode = LabelOrConstant(previousTerm);
+				var rightNode = LabelOrConstant(nextTerm);
+				var children = new List<AstNode> { leftNode, rightNode };
+				return new AstNode(TokenType.ARITHMETIC_OPERATOR, arithmeticOperator.Value, children);
+			}
+
 		}
 
 		private AstNode LabelOrConstant(Token token)
