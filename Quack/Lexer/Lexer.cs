@@ -16,7 +16,7 @@ namespace Quack.Lexer
 
 		public Queue<Token> Tokenise(string input)
 		{
-			Console.WriteLine("--- LEXER START ---");
+			Console.WriteLine("--- LEXER ---");
 
 			var splitInput = input.Split(' ');
 
@@ -33,8 +33,6 @@ namespace Quack.Lexer
 				
 				tokenQueue.Enqueue(tokenDefinition.GetToken(term));
 			}
-			
-			Console.WriteLine("--- LEXER END ---");
 
 			return tokenQueue;
 		}

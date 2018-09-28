@@ -10,7 +10,7 @@ namespace Quack.Parser
 	{
 		public AstNode Parse(Queue<Token> tokens)
 		{
-			Console.WriteLine("--- PARSER START ---");
+			Console.WriteLine("--- PARSER ---");
 
 			var remainingTokens = new Queue<Token>(tokens);
 
@@ -25,8 +25,6 @@ namespace Quack.Parser
 				}
 				remainingTokens = parsedStatement.RemainingTokens;
 			}
-
-			Console.WriteLine("--- PARSER END ---");
 
 			return rootNode;
 		}

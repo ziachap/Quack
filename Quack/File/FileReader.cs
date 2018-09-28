@@ -6,7 +6,11 @@ namespace Quack.File
 {
 	public class FileReader : IFileReader
 	{
-		public string LoadFromFile(string path) => ReadFileToEnd(path);
+		public string LoadFromFile(string path)
+		{
+			Console.WriteLine("--- READER ---");
+			return ReadFileToEnd(path);
+		}
 
 		public static string ReadFileToEnd(string path)
 		{

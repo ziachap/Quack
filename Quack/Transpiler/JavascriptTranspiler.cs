@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text;
 using Quack.Lexer.TokenDefinitions;
 using Quack.Parser;
@@ -16,6 +17,8 @@ namespace Quack.Transpiler
 
 		public string Transpile(AstNode rootNode)
 		{
+			Console.WriteLine("--- Transpiler (JavaScript) ---");
+
 			foreach (var node in rootNode.Children)
 			{
 				Statement(node);
