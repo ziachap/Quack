@@ -1,7 +1,10 @@
 using System;
 using Ninject;
+using Quack.File;
 using Quack.Lexer;
 using Quack.Lexer.TokenDefinitions;
+using Quack.Parser;
+using Quack.Transpiler;
 
 namespace Quack
 {
@@ -13,7 +16,7 @@ namespace Quack
 
 			var compiler = kernel.Get<ICompiler>();
 
-			compiler.Compile();
+			compiler.Compile(args[0]);
 
 			Console.ReadKey();
 		}
@@ -23,7 +26,12 @@ namespace Quack
 			var kernel = new StandardKernel();
 
 			kernel.Bind<ICompiler>().To<Compiler>();
+			kernel.Bind<IFileReader>().To<FileReader>();
+			kernel.Bind<IFileWriter>().To<FileWriter>();
+			kernel.Bind<ISourceSanitizer>().To<SourceSanitizer>();
 			kernel.Bind<ILexer>().To<Lexer.Lexer>();
+			kernel.Bind<IParser>().To<Parser.Parser>();
+			kernel.Bind<ITranspiler>().To<JavascriptTranspiler>();
 			BindTokenDefinitions(kernel);
 
 			return kernel;
@@ -37,7 +45,7 @@ namespace Quack
 			kernel.Bind<ITokenDefinition>().To<StatementEndTokenDefinition>();
 			kernel.Bind<ITokenDefinition>().To<PrintTokenDefinition>();
 			kernel.Bind<ITokenDefinition>().To<NumberTokenDefinition>();
-			kernel.Bind<ITokenDefinition>().To<VarNameTokenDefinition>();
+			kernel.Bind<ITokenDefinition>().To<LabelTokenDefinition>();
 		}
 
 	}

@@ -1,3 +1,4 @@
+using System;
 using Quack.Lexer.TokenDefinitions;
 
 namespace Quack.Lexer
@@ -12,5 +13,12 @@ namespace Quack.Lexer
 
 		public TokenType Type { get; }
 		public string Value { get; }
+
+		public override string ToString()
+		{
+			var type = Enum.GetName(typeof(TokenType), Type);
+			var valueString = Value != null ? " : " + Value : string.Empty;
+			return $"[{type}{valueString}]";
+		}
 	}
 }

@@ -8,12 +8,13 @@ namespace Quack.Lexer.TokenDefinitions
 
 	public enum TokenType
 	{
+		ROOT,
 		DECLARE,
 		ASSIGN,
 		ARITHMETIC_OPERATOR,
 		STATEMENT_END,
 		PRINT,
 		NUMBER,
-		VAR_NAME
+		LABEL
 	}
 }
