@@ -4,12 +4,15 @@ Quack is a language I made when I was bored and decided it would be fun to make 
 At the moment Quack supports:
 - Variable declaration and assignment
 - Numerical data
+- Add and subtract arithmetic operations
 - Print
 
 An example of Quack code:
 ```
 declare a ;
-a = 5 ;
+declare b ;
+b = 3 ;
+a = 2 + b - 1 ;
 print a ;
 ```
 
