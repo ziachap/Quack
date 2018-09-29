@@ -3,6 +3,6 @@ declare b;
 declare hello;
 b = 3;
 a = 2 + b - 1;
-hello = a + 5;
+hello = 24 / 2;
 print a;
 print hello;
