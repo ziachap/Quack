@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Quack.Lexer;
 using Quack.Lexer.TokenDefinitions;
 
@@ -8,18 +9,25 @@ namespace Quack.Parser
 {
 	public class Parser : IParser
 	{
+		private readonly IArithmeticExpressionParser _arithmeticExpressionParser;
+
+		public Parser(IArithmeticExpressionParser arithmeticExpressionParser)
+		{
+			_arithmeticExpressionParser = arithmeticExpressionParser;
+		}
+
 		public AstNode Parse(Queue<Token> tokens)
 		{
 			Console.WriteLine("--- PARSER ---");
 
 			var remainingTokens = new Queue<Token>(tokens);
 
-			var rootNode = new AstNode(TokenType.ROOT);
+			var rootNode = new AstNode(AstNodeType.ROOT);
 
 			while (remainingTokens.Any())
 			{
 				var statementNode = Statement(remainingTokens);
-				if (statementNode.Type != TokenType.STATEMENT_END)
+				if (statementNode.Type != AstNodeType.STATEMENT_END)
 				{
 					rootNode.Children.Add(statementNode);
 				}
@@ -48,20 +56,20 @@ namespace Quack.Parser
 
 		private AstNode StatementEnd(Queue<Token> tokens)
 		{
-			var statementEndNode = new AstNode(TokenType.STATEMENT_END);
+			var statementEndNode = new AstNode(AstNodeType.STATEMENT_END);
 			Skip(tokens, TokenType.STATEMENT_END);
 			return statementEndNode;
 		}
 
 		private AstNode Declare(Queue<Token> tokens)
 		{
-			var declareNode = new AstNode(TokenType.DECLARE);
+			var declareNode = new AstNode(AstNodeType.DECLARE);
 
 			Skip(tokens, TokenType.DECLARE);
 			
 			var labelToken = tokens.Dequeue();
 			AssertTypeOrThrow(labelToken, TokenType.LABEL);
-			var labelNode = new AstNode(TokenType.LABEL, labelToken.Value);
+			var labelNode = new AstNode(AstNodeType.LABEL, labelToken.Value);
 
 			declareNode.Children.Add(labelNode);
 
@@ -70,7 +78,7 @@ namespace Quack.Parser
 
 		private AstNode Assign(Queue<Token> tokens)
 		{
-			var assignNode = new AstNode(TokenType.ASSIGN);
+			var assignNode = new AstNode(AstNodeType.ASSIGN);
 
 			var assignmentTarget = tokens.Dequeue();
 			AssertTypeOrThrow(assignmentTarget, TokenType.LABEL);
@@ -78,55 +86,24 @@ namespace Quack.Parser
 
 			Skip(tokens, TokenType.ASSIGN);
 
-			assignNode.Children.Add(EvaluatedValue(tokens));
+			assignNode.Children.Add(_arithmeticExpressionParser.ParseExpression(tokens));
 			
 			return assignNode;
 		}
 
 		private AstNode Print(Queue<Token> tokens)
 		{
-			var printNode = new AstNode(TokenType.PRINT);
+			var printNode = new AstNode(AstNodeType.PRINT);
 
 			Skip(tokens, TokenType.PRINT);
 			
-			printNode.Children.Add(EvaluatedValue(tokens));
+			printNode.Children.Add(_arithmeticExpressionParser.ParseExpression(tokens));
 
 			return printNode;
 		}
-
-		private AstNode EvaluatedValue(Queue<Token> tokens)
-		{
-			var valueToken = tokens.Dequeue();
-
-			return tokens.Peek().Type == TokenType.ARITHMETIC_OPERATOR 
-				? ArithmeticOperation(tokens, valueToken) 
-				: LabelOrConstant(valueToken);
-		}
-
-		private AstNode ArithmeticOperation(Queue<Token> tokens, Token previousTerm)
-		{
-			var arithmeticOperator = tokens.Dequeue();
-			var children = new List<AstNode> { LabelOrConstant(previousTerm), EvaluatedValue(tokens) };
-
-			return new AstNode(TokenType.ARITHMETIC_OPERATOR, arithmeticOperator.Value, children);
-		}
-
-		private AstNode LabelOrConstant(Token token)
-		{
-			switch (token.Type)
-			{
-				case TokenType.LABEL:
-					return Label(token);
-				case TokenType.NUMBER:
-					return Number(token);
-				default:
-					throw new ParseException("Expected a label or constant");
-			}
-		}
-
-		private static AstNode Label(Token token) => new AstNode(TokenType.LABEL, token.Value);
-		private static AstNode Number(Token token) => new AstNode(TokenType.NUMBER, token.Value);
-
+		
+		private static AstNode Label(Token token) => new AstNode(AstNodeType.LABEL, token.Value);
+		
 		private static void Skip(Queue<Token> tokens, TokenType expectedType)
 		{
 			var token = tokens.Dequeue();

@@ -31,6 +31,7 @@ namespace Quack
 			kernel.Bind<ISourceSanitizer>().To<SourceSanitizer>();
 			kernel.Bind<ILexer>().To<Lexer.Lexer>();
 			kernel.Bind<IParser>().To<Parser.Parser>();
+			kernel.Bind<IArithmeticExpressionParser>().To<ArithmeticExpressionParser>();
 			kernel.Bind<ITranspiler>().To<JavascriptTranspiler>();
 			BindTokenDefinitions(kernel);
 
@@ -44,6 +45,8 @@ namespace Quack
 			kernel.Bind<ITokenDefinition>().To<ArithmeticOperatorTokenDefinition>();
 			kernel.Bind<ITokenDefinition>().To<StatementEndTokenDefinition>();
 			kernel.Bind<ITokenDefinition>().To<PrintTokenDefinition>();
+			kernel.Bind<ITokenDefinition>().To<OpenParenthesisTokenDefinition>();
+			kernel.Bind<ITokenDefinition>().To<CloseParenthesisTokenDefinition>();
 			kernel.Bind<ITokenDefinition>().To<NumberTokenDefinition>();
 			kernel.Bind<ITokenDefinition>().To<LabelTokenDefinition>();
 		}

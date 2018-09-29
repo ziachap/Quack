@@ -80,7 +80,7 @@ namespace Quack
 
 		private string AstNodeText(AstNode node)
 		{
-			var type = Enum.GetName(typeof(TokenType), node.Type);
+			var type = Enum.GetName(typeof(AstNodeType), node.Type);
 			var valueString = node.Value != null ? " : " + node.Value : string.Empty;
 			return $"[{type}{valueString}]";
 		}

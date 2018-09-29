@@ -6,34 +6,35 @@ namespace Quack.Parser
 {
 	public class AstNode
 	{
-		public AstNode(TokenType type, string value = null)
+		public AstNode(AstNodeType type, string value = null)
 		{
 			Type = type;
 			Value = value;
 			Children = new List<AstNode>();
 		}
 
-		public AstNode(TokenType type, string value, List<AstNode> children)
+		public AstNode(AstNodeType type, string value, List<AstNode> children)
 		{
 			Type = type;
 			Value = value;
 			Children = children;
 		}
 
-		public TokenType Type { get; }
+		public AstNodeType Type { get; }
 		public string Value { get; }
 		public List<AstNode> Children { get; set; }
 	}
 
-	public class StatementParseResult
+	public enum AstNodeType
 	{
-		public StatementParseResult(AstNode node, Queue<Token> remainingTokens)
-		{
-			Node = node;
-			RemainingTokens = remainingTokens;
-		}
-
-		public AstNode Node { get; }
-		public Queue<Token> RemainingTokens { get; }
+		ROOT,
+		DECLARE,
+		ASSIGN,
+		ARITHMETIC_OPERATOR,
+		STATEMENT_END,
+		PRINT,
+		NUMBER,
+		LABEL,
+		FACTOR
 	}
 }

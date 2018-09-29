@@ -32,11 +32,11 @@ namespace Quack.Transpiler
 		{
 			switch (node.Type)
 			{
-				case TokenType.DECLARE:
+				case AstNodeType.DECLARE:
 					return Declare(node);
-				case TokenType.PRINT:
+				case AstNodeType.PRINT:
 					return Print(node);
-				case TokenType.ASSIGN:
+				case AstNodeType.ASSIGN:
 					return Assign(node);
 				default:
 					throw new TranspilerException("AstNode type not supported");
@@ -51,29 +51,34 @@ namespace Quack.Transpiler
 
 		private string Print(AstNode node)
 		{
-			var value = EvaluatedValue(node.Children.Single());
+			var value = Expression(node.Children.Single());
 			return $"console.log({value})";
 		}
 
 		private string Assign(AstNode node)
 		{
 			var label = node.Children.First().Value;
-			var value = EvaluatedValue(node.Children.ElementAt(1));
+			var value = Expression(node.Children.ElementAt(1));
 			return $"{label} = {value}";
 		}
 
-		private string EvaluatedValue(AstNode node)
+		private string Expression(AstNode node)
 		{
-			return node.Type == TokenType.ARITHMETIC_OPERATOR 
+			if (node.Type == AstNodeType.FACTOR)
+			{
+				return $"({Expression(node.Children.Single())})";
+			}
+
+			return node.Type == AstNodeType.ARITHMETIC_OPERATOR 
 				? ArithmeticOperation(node) 
 				: $"{node.Value}";
 		}
 
 		private string ArithmeticOperation(AstNode node)
 		{
-			var left = node.Children.First().Value;
+			var left = Expression(node.Children.First());
 			var op = node.Value;
-			var right = EvaluatedValue(node.Children.ElementAt(1));
+			var right = Expression(node.Children.ElementAt(1));
 			return $"{left} {op} {right}";
 		}
 

@@ -15,6 +15,8 @@ namespace Quack.Lexer.TokenDefinitions
 		STATEMENT_END,
 		PRINT,
 		NUMBER,
-		LABEL
+		LABEL,
+		OPEN_PARENTHESES,
+		CLOSE_PARENTHESES
 	}
 }

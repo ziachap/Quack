@@ -7,10 +7,11 @@ namespace Quack.File
 		public string Sanitize(string input)
 		{
 			var output = input;
+			output = SeperateParentheses(output);
 			output = SeperateStatementEnds(output);
 			output = RemoveNewLines(output);
 			output = ReduceWhitespace(output);
-			output = TrimWhiteSpace(output);
+			output = TrimWhitespace(output);
 			return output;
 		}
 
@@ -37,7 +38,7 @@ namespace Quack.File
 			return regex.Replace(input, " ");
 		}
 
-		private static string TrimWhiteSpace(string input)
+		private static string TrimWhitespace(string input)
 		{
 			return input.Trim();
 		}
