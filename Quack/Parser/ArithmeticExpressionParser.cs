@@ -32,8 +32,8 @@ namespace Quack.Parser
 
 		private AstNode Factor(Queue<Token> tokens)
 		{
-			var nextToken = PeekPastCloseParentheses(tokens);
 			var enclosedTokens = TakeTokensUntilCloseParentheses(tokens);
+			var nextToken = tokens.Any() ? tokens.Peek() : null;
 
 			var children = new[] { ParseExpression(enclosedTokens) }.ToList();
 			var factor = new AstNode(AstNodeType.FACTOR, null, children);
@@ -66,29 +66,7 @@ namespace Quack.Parser
 
 		private static AstNode Label(Token token) => new AstNode(AstNodeType.LABEL, token.Value);
 		private static AstNode Number(Token token) => new AstNode(AstNodeType.NUMBER, token.Value);
-
-		private Token PeekPastCloseParentheses(Queue<Token> tokens)
-		{
-			var parenthesisStack = new Stack<string>(new[] { "(" });
-			var index = 0;
-
-			while (parenthesisStack.Any())
-			{
-				var nextToken = tokens.ElementAt(index);
-				if (nextToken.Type == TokenType.OPEN_PARENTHESES)
-				{
-					parenthesisStack.Push("(");
-				}
-				else if (nextToken.Type == TokenType.CLOSE_PARENTHESES)
-				{
-					parenthesisStack.Pop();
-				}
-				index++;
-			}
-
-			return index > tokens.Count - 1 ? null : tokens.ElementAt(index);
-		}
-
+		
 		private Queue<Token> TakeTokensUntilCloseParentheses(Queue<Token> tokens)
 		{
 			var parenthesisStack = new Stack<string>(new[] { "(" });
