@@ -14,6 +14,12 @@ namespace Quack.File
 			return output;
 		}
 
+		private static string SeperateParentheses(string input)
+		{
+			var output = Regex.Replace(input, @"\(", " ( ");
+			return Regex.Replace(output, @"\)", " ) ");
+		}
+
 		private static string SeperateStatementEnds(string input)
 		{
 			return Regex.Replace(input, @";", " ; ");

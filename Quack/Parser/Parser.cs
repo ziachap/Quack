@@ -18,20 +18,19 @@ namespace Quack.Parser
 
 			while (remainingTokens.Any())
 			{
-				var parsedStatement = Statement(remainingTokens);
-				if (parsedStatement.Node.Type != TokenType.STATEMENT_END)
+				var statementNode = Statement(remainingTokens);
+				if (statementNode.Type != TokenType.STATEMENT_END)
 				{
-					rootNode.Children.Add(parsedStatement.Node);
+					rootNode.Children.Add(statementNode);
 				}
-				remainingTokens = parsedStatement.RemainingTokens;
 			}
 
 			return rootNode;
 		}
 
-		private StatementParseResult Statement(Queue<Token> tokens)
+		private AstNode Statement(Queue<Token> tokens)
 		{
-			var nextToken = tokens.First();
+			var nextToken = tokens.Peek();
 			switch (nextToken.Type)
 			{
 				case TokenType.DECLARE:
@@ -47,19 +46,18 @@ namespace Quack.Parser
 			}
 		}
 
-		private StatementParseResult StatementEnd(Queue<Token> tokens)
+		private AstNode StatementEnd(Queue<Token> tokens)
 		{
 			var statementEndNode = new AstNode(TokenType.STATEMENT_END);
-			tokens.Dequeue();
-			return new StatementParseResult(statementEndNode, tokens);
+			Skip(tokens, TokenType.STATEMENT_END);
+			return statementEndNode;
 		}
 
-		private StatementParseResult Declare(Queue<Token> tokens)
+		private AstNode Declare(Queue<Token> tokens)
 		{
 			var declareNode = new AstNode(TokenType.DECLARE);
 
-			var declareToken = tokens.Dequeue();
-			AssertTypeOrThrow(declareToken, TokenType.DECLARE);
+			Skip(tokens, TokenType.DECLARE);
 			
 			var labelToken = tokens.Dequeue();
 			AssertTypeOrThrow(labelToken, TokenType.LABEL);
@@ -67,10 +65,10 @@ namespace Quack.Parser
 
 			declareNode.Children.Add(labelNode);
 
-			return new StatementParseResult(declareNode, tokens);
+			return declareNode;
 		}
 
-		private StatementParseResult Assign(Queue<Token> tokens)
+		private AstNode Assign(Queue<Token> tokens)
 		{
 			var assignNode = new AstNode(TokenType.ASSIGN);
 
@@ -78,61 +76,39 @@ namespace Quack.Parser
 			AssertTypeOrThrow(assignmentTarget, TokenType.LABEL);
 			assignNode.Children.Add(Label(assignmentTarget));
 
-			var assignmentOperator = tokens.Dequeue();
-			AssertTypeOrThrow(assignmentOperator, TokenType.ASSIGN);
+			Skip(tokens, TokenType.ASSIGN);
+
+			assignNode.Children.Add(EvaluatedValue(tokens));
 			
-			var valueToken = tokens.Dequeue();
-
-			// lookahead for arithmetic operator
-			if (tokens.First().Type == TokenType.ARITHMETIC_OPERATOR)
-			{
-				assignNode.Children.Add(ArithmeticOperation(tokens, valueToken));
-			}
-			else
-			{
-				assignNode.Children.Add(LabelOrConstant(valueToken));
-			}
-
-
-			return new StatementParseResult(assignNode, tokens);
+			return assignNode;
 		}
 
-		private StatementParseResult Print(Queue<Token> tokens)
+		private AstNode Print(Queue<Token> tokens)
 		{
 			var printNode = new AstNode(TokenType.PRINT);
 
-			var printToken = tokens.Dequeue();
-			AssertTypeOrThrow(printToken, TokenType.PRINT);
+			Skip(tokens, TokenType.PRINT);
+			
+			printNode.Children.Add(EvaluatedValue(tokens));
 
+			return printNode;
+		}
+
+		private AstNode EvaluatedValue(Queue<Token> tokens)
+		{
 			var valueToken = tokens.Dequeue();
-			var valueNode = LabelOrConstant(valueToken);
 
-			printNode.Children.Add(valueNode);
-
-			return new StatementParseResult(printNode, tokens);
+			return tokens.Peek().Type == TokenType.ARITHMETIC_OPERATOR 
+				? ArithmeticOperation(tokens, valueToken) 
+				: LabelOrConstant(valueToken);
 		}
 
 		private AstNode ArithmeticOperation(Queue<Token> tokens, Token previousTerm)
 		{
 			var arithmeticOperator = tokens.Dequeue();
-			var nextTerm = tokens.Dequeue();
+			var children = new List<AstNode> { LabelOrConstant(previousTerm), EvaluatedValue(tokens) };
 
-			// lookahead for further arithmetic operations
-			if (tokens.First().Type == TokenType.ARITHMETIC_OPERATOR)
-			{
-				var leftNode = LabelOrConstant(previousTerm);
-				var rightNode = ArithmeticOperation(tokens, nextTerm);
-				var children = new List<AstNode> { leftNode, rightNode };
-				return new AstNode(TokenType.ARITHMETIC_OPERATOR, arithmeticOperator.Value, children);
-			}
-			else
-			{
-				var leftNode = LabelOrConstant(previousTerm);
-				var rightNode = LabelOrConstant(nextTerm);
-				var children = new List<AstNode> { leftNode, rightNode };
-				return new AstNode(TokenType.ARITHMETIC_OPERATOR, arithmeticOperator.Value, children);
-			}
-
+			return new AstNode(TokenType.ARITHMETIC_OPERATOR, arithmeticOperator.Value, children);
 		}
 
 		private AstNode LabelOrConstant(Token token)
@@ -148,11 +124,16 @@ namespace Quack.Parser
 			}
 		}
 
-		private AstNode Label(Token token) => new AstNode(TokenType.LABEL, token.Value);
-		private AstNode Number(Token token) => new AstNode(TokenType.NUMBER, token.Value);
+		private static AstNode Label(Token token) => new AstNode(TokenType.LABEL, token.Value);
+		private static AstNode Number(Token token) => new AstNode(TokenType.NUMBER, token.Value);
 
+		private static void Skip(Queue<Token> tokens, TokenType expectedType)
+		{
+			var token = tokens.Dequeue();
+			AssertTypeOrThrow(token, expectedType);
+		}
 
-		private void AssertTypeOrThrow(Token token, TokenType expectedType)
+		private static void AssertTypeOrThrow(Token token, TokenType expectedType)
 		{
 			if (token.Type != expectedType)
 			{
@@ -160,6 +141,6 @@ namespace Quack.Parser
 			}
 		}
 
-		private string TokenTypeName(TokenType type) => Enum.GetName(typeof(TokenType), type);
+		private static string TokenTypeName(TokenType type) => Enum.GetName(typeof(TokenType), type);
 	}
 }

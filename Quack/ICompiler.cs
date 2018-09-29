@@ -54,14 +54,13 @@ namespace Quack
 			var tokens = _lexer.Tokenise(sanitizedInput);
 			foreach (var token in tokens)
 			{
-				PrintToken(token);
+				Console.WriteLine($"    {token}");
 			}
 
 			var ast = _parser.Parse(tokens);
 			PrintAstTree(ast);
 			
 			var transpiledCode = _transpiler.Transpile(ast);
-			Console.WriteLine("Transpiled Code:");
 			Console.WriteLine(transpiledCode);
 
 			var outputPath = "C:/working.git/Quack/TestScripts";
@@ -75,7 +74,7 @@ namespace Quack
 
 		private void PrintAstTree(AstNode node, int level = 1)
 		{
-			Console.WriteLine(new String(' ', 4 * level) + AstNodeText(node));
+			Console.WriteLine(new String(' ', 2 * level) + AstNodeText(node));
 			node.Children.ForEach(n => PrintAstTree(n, level + 1));
 		}
 
@@ -84,11 +83,6 @@ namespace Quack
 			var type = Enum.GetName(typeof(TokenType), node.Type);
 			var valueString = node.Value != null ? " : " + node.Value : string.Empty;
 			return $"[{type}{valueString}]";
-		}
-
-		public void PrintToken(Token token)
-		{
-			Console.WriteLine($"    {token}");
 		}
 	}
 }

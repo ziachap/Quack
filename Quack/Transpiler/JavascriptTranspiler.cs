@@ -21,78 +21,60 @@ namespace Quack.Transpiler
 
 			foreach (var node in rootNode.Children)
 			{
-				Statement(node);
+				_output.Append(Statement(node));
+				StatementEnd();
 			}
 
 			return _output.ToString();
 		}
 
-		private void Statement(AstNode node)
+		private string Statement(AstNode node)
 		{
 			switch (node.Type)
 			{
 				case TokenType.DECLARE:
-					Declare(node);
-					break;
+					return Declare(node);
 				case TokenType.PRINT:
-					Print(node);
-					break;
+					return Print(node);
 				case TokenType.ASSIGN:
-					Assign(node);
-					break;
+					return Assign(node);
 				default:
 					throw new TranspilerException("AstNode type not supported");
 			}
 		}
 
-		private void Declare(AstNode node)
-		{
-			_output.Append("var ");
-			var label = node.Children.Single().Value;
-			_output.Append(label);
-			StatementEnd();
-		}
-
-		private void Print(AstNode node)
+		private string Declare(AstNode node)
 		{
 			var label = node.Children.Single().Value;
-			_output.Append($"console.log({label})");
-			StatementEnd();
+			return $"var {label}";
 		}
 
-		private void Assign(AstNode node)
+		private string Print(AstNode node)
 		{
-			var target = node.Children.First().Value;
-			_output.Append(target);
-			_output.Append(" =");
-
-			var valueNode  = node.Children.ElementAt(1);
-			if (valueNode.Type == TokenType.ARITHMETIC_OPERATOR)
-			{
-				ArithmeticOperation(valueNode);
-			}
-			else
-			{
-				_output.Append(" " + valueNode.Value);
-
-			}
-
-			StatementEnd();
+			var value = EvaluatedValue(node.Children.Single());
+			return $"console.log({value})";
 		}
 
-		private void ArithmeticOperation(AstNode node)
+		private string Assign(AstNode node)
 		{
-			_output.Append(" " + node.Children.First().Value);
-			_output.Append($" {node.Value}");
-			var rightValue = node.Children.ElementAt(1);
-			if (rightValue.Type == TokenType.ARITHMETIC_OPERATOR)
-			{
-				ArithmeticOperation(rightValue);
-			}
-			else
-			{
-				_output.Append(" " + rightValue.Value);
-			}
+			var label = node.Children.First().Value;
+			var value = EvaluatedValue(node.Children.ElementAt(1));
+			return $"{label} = {value}";
+		}
+
+		private string EvaluatedValue(AstNode node)
+		{
+			return node.Type == TokenType.ARITHMETIC_OPERATOR 
+				? ArithmeticOperation(node) 
+				: $"{node.Value}";
+		}
+
+		private string ArithmeticOperation(AstNode node)
+		{
+			var left = node.Children.First().Value;
+			var op = node.Value;
+			var right = EvaluatedValue(node.Children.ElementAt(1));
+			return $"{left} {op} {right}";
 		}
 
 		private void StatementEnd()
