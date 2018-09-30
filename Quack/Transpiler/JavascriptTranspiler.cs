@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
-using Quack.Lexer.TokenDefinitions;
 using Quack.Parser;
 
 namespace Quack.Transpiler
@@ -9,23 +8,31 @@ namespace Quack.Transpiler
 	public class JavascriptTranspiler : ITranspiler
 	{
 		private readonly StringBuilder _output;
+		private int IndentationLevel { get; set; }
 
 		public JavascriptTranspiler()
 		{
 			_output = new StringBuilder();
+			IndentationLevel = 0;
 		}
 
 		public string Transpile(AstNode rootNode)
 		{
 			Console.WriteLine("--- Transpiler (JavaScript) ---");
 
-			foreach (var node in rootNode.Children)
-			{
-				_output.Append(Statement(node));
-				StatementEnd();
-			}
+			_output.Append(Statements(rootNode));
 
 			return _output.ToString();
+		}
+
+		private string Statements(AstNode node)
+		{
+			var statements = string.Empty;
+			foreach (var childNode in node.Children)
+			{
+				statements += Indentation() + Statement(childNode) + StatementEnd();
+			}
+			return statements;
 		}
 
 		private string Statement(AstNode node)
@@ -38,6 +45,8 @@ namespace Quack.Transpiler
 					return Print(node);
 				case AstNodeType.ASSIGN:
 					return Assign(node);
+				case AstNodeType.IF_ELSE:
+					return IfElse(node);
 				default:
 					throw new TranspilerException("AstNode type not supported");
 			}
@@ -67,6 +76,15 @@ namespace Quack.Transpiler
 			return $"{label} = {value}";
 		}
 
+		private string IfElse(AstNode node)
+		{
+			var boolExp = Expression(node.Children.First());
+			IndentationLevel++;
+			var ifStatements = Statements(node.Children.ElementAt(1));
+			IndentationLevel--;
+			return $"if ({boolExp}) {{\n{ifStatements}}}";
+		}
+
 		private string Expression(AstNode node)
 		{
 			if (node.Type == AstNodeType.FACTOR)
@@ -74,12 +92,12 @@ namespace Quack.Transpiler
 				return $"({Expression(node.Children.Single())})";
 			}
 
-			return node.Type == AstNodeType.ARITHMETIC_OPERATOR 
-				? ArithmeticOperation(node) 
+			return node.Type == AstNodeType.ARITHMETIC_OPERATOR || node.Type == AstNodeType.BOOLEAN_OPERATOR
+				? Operation(node) 
 				: $"{node.Value}";
 		}
 
-		private string ArithmeticOperation(AstNode node)
+		private string Operation(AstNode node)
 		{
 			var left = Expression(node.Children.First());
 			var op = node.Value;
@@ -87,9 +105,8 @@ namespace Quack.Transpiler
 			return $"{left} {op} {right}";
 		}
 
-		private void StatementEnd()
-		{
-			_output.Append(";\n");
-		}
+		private string StatementEnd() => ";\n";
+
+		private string Indentation() => new string(' ', 2 * IndentationLevel);
 	}
 }

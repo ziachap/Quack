@@ -6,8 +6,15 @@ using Quack.Lexer.TokenDefinitions;
 
 namespace Quack.Parser
 {
-	public class ArithmeticExpressionParser : IArithmeticExpressionParser
+	public class ExpressionParser : IExpressionParser
 	{
+		private readonly IBracketService _bracketService;
+
+		public ExpressionParser(IBracketService bracketService)
+		{
+			_bracketService = bracketService;
+		}
+
 		public  AstNode ParseExpression(Queue<Token> tokens)
 		{
 			var currentToken = tokens.Dequeue();
@@ -18,7 +25,11 @@ namespace Quack.Parser
 			}
 			else if (tokens.Count > 1 && tokens.Peek().Type == TokenType.ARITHMETIC_OPERATOR)
 			{
-				return ArithmeticOperation(tokens, LabelOrConstant(currentToken));
+				return Operation(tokens, LabelOrConstant(currentToken), AstNodeType.ARITHMETIC_OPERATOR);
+			}
+			else if (tokens.Count > 1 && tokens.Peek().Type == TokenType.BOOLEAN_OPERATOR)
+			{
+				return Operation(tokens, LabelOrConstant(currentToken), AstNodeType.BOOLEAN_OPERATOR);
 			}
 			else if (currentToken.Type == TokenType.LABEL || currentToken.Type == TokenType.NUMBER)
 			{
@@ -32,23 +43,32 @@ namespace Quack.Parser
 
 		private AstNode Factor(Queue<Token> tokens)
 		{
-			var enclosedTokens = TakeTokensUntilCloseParentheses(tokens);
+			var enclosedTokens = _bracketService.TakeTokensUntilCloseParentheses(tokens);
 			var children = new[] { ParseExpression(enclosedTokens) }.ToList();
 			var factor = new AstNode(AstNodeType.FACTOR, null, children);
 
-			return tokens.Any() && tokens.Peek().Type == TokenType.ARITHMETIC_OPERATOR
-				? ArithmeticOperation(tokens, factor)
-				: factor;
+			if (tokens.Any())
+			{
+				switch (tokens.Peek().Type)
+				{
+					case TokenType.ARITHMETIC_OPERATOR:
+						return Operation(tokens, factor, AstNodeType.ARITHMETIC_OPERATOR);
+					case TokenType.BOOLEAN_OPERATOR:
+						return Operation(tokens, factor, AstNodeType.BOOLEAN_OPERATOR);
+				}
+			}
+
+			return factor;
 		}
 
-		private AstNode ArithmeticOperation(Queue<Token> tokens, AstNode leftNode)
+		private AstNode Operation(Queue<Token> tokens, AstNode leftNode, AstNodeType operationType)
 		{
-			var arithmeticOperator = tokens.Dequeue();
+			var op = tokens.Dequeue();
 			var children = new List<AstNode> { leftNode, ParseExpression(tokens) };
 
-			return new AstNode(AstNodeType.ARITHMETIC_OPERATOR, arithmeticOperator.Value, children);
+			return new AstNode(operationType, op.Value, children);
 		}
-
+		
 		private AstNode LabelOrConstant(Token token)
 		{
 			switch (token.Type)
@@ -65,36 +85,6 @@ namespace Quack.Parser
 		private static AstNode Label(Token token) => new AstNode(AstNodeType.LABEL, token.Value);
 		private static AstNode Number(Token token) => new AstNode(AstNodeType.NUMBER, token.Value);
 		
-		private Queue<Token> TakeTokensUntilCloseParentheses(Queue<Token> tokens)
-		{
-			var parenthesisStack = new Stack<string>(new[] { "(" });
-			var enclosedTokens = new Queue<Token>();
-
-			while (parenthesisStack.Any())
-			{
-				var nextToken = tokens.Dequeue();
-				if (nextToken.Type == TokenType.OPEN_PARENTHESES)
-				{
-					parenthesisStack.Push("(");
-					enclosedTokens.Enqueue(nextToken);
-				}
-				else if (nextToken.Type == TokenType.CLOSE_PARENTHESES)
-				{
-					parenthesisStack.Pop();
-					if (parenthesisStack.Any())
-					{
-						enclosedTokens.Enqueue(nextToken);
-					}
-				}
-				else
-				{
-					enclosedTokens.Enqueue(nextToken);
-				}
-			}
-
-			return enclosedTokens;
-		}
-
 		private static string TokenTypeName(TokenType type) => Enum.GetName(typeof(TokenType), type);
 	}
 }

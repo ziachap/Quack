@@ -4,24 +4,52 @@ namespace Quack.File
 {
 	public class SourceSanitizer : ISourceSanitizer
 	{
+		// TODO: Consider a scanner approach for better performance
 		public string Sanitize(string input)
 		{
 			var output = input;
-			output = SeperateParentheses(output);
-			output = SeperateStatementEnds(output);
+			output = PadArithmeticOperators(output);
+			output = PadBooleanOperators(output);
+			output = PadParentheses(output);
+			output = PadBraces(output);
+			output = PadStatementEnds(output);
 			output = RemoveNewLines(output);
 			output = ReduceWhitespace(output);
 			output = TrimWhitespace(output);
 			return output;
 		}
 
-		private static string SeperateParentheses(string input)
+		private static string PadArithmeticOperators(string input)
+		{
+			var output = Regex.Replace(input, @"\+", " + ");
+			output = Regex.Replace(output, @"\-", " - ");
+			output = Regex.Replace(output, @"\*", " * ");
+			return Regex.Replace(output, @"\/", " / ");
+		}
+
+		private static string PadBooleanOperators(string input)
+		{
+			var output = Regex.Replace(input, @"\>", " > ");
+			output = Regex.Replace(output, @"\<", " < ");
+			output = Regex.Replace(output, @"\>\=", " >= ");
+			output = Regex.Replace(output, @"\<\=", " <= ");
+			output = Regex.Replace(output, @"\!\=", " != ");
+			return Regex.Replace(output, @"\=\=", " == ");
+		}
+		
+		private static string PadBraces(string input)
+		{
+			var output = Regex.Replace(input, @"\{", " { ");
+			return Regex.Replace(output, @"\}", " } ");
+		}
+
+		private static string PadParentheses(string input)
 		{
 			var output = Regex.Replace(input, @"\(", " ( ");
 			return Regex.Replace(output, @"\)", " ) ");
 		}
 
-		private static string SeperateStatementEnds(string input)
+		private static string PadStatementEnds(string input)
 		{
 			return Regex.Replace(input, @";", " ; ");
 		}

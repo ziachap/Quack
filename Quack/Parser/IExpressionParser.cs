@@ -3,7 +3,7 @@ using Quack.Lexer;
 
 namespace Quack.Parser
 {
-	public interface IArithmeticExpressionParser
+	public interface IExpressionParser
 	{
 		AstNode ParseExpression(Queue<Token> tokens);
 	}

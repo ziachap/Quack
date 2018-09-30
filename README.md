@@ -6,15 +6,19 @@ At the moment Quack supports:
 - Numerical data
 - Arithmetic operations
 - Open/close parentheses
+- If (control flow)
 - Print
 
 An example of Quack code:
 ```
 declare a;
-declare b;
-b = 8;
+declare b = 8;
 a = (2 + (b / 2)) - (1 * 3);
+if ((1 + 3) < b) {
+	b = 2;
+}
 print a;
+print b;
 ```
 
 Quack code is transpiled into JavaScript code. I plan on adding more transpilation targets in the future and perhaps even compilation!

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Quack.Lexer;
 using Quack.Lexer.TokenDefinitions;
 
@@ -23,18 +24,27 @@ namespace Quack.Parser
 		public AstNodeType Type { get; }
 		public string Value { get; }
 		public List<AstNode> Children { get; set; }
+
+		public override string ToString()
+		{
+			var type = Enum.GetName(typeof(AstNodeType), Type);
+			var valueString = Value != null ? " : " + Value : string.Empty;
+			return $"[{type}{valueString}]";
+		}
 	}
 
 	public enum AstNodeType
 	{
-		ROOT,
+		STATEMENTS,
 		DECLARE,
 		ASSIGN,
 		ARITHMETIC_OPERATOR,
+		BOOLEAN_OPERATOR,
 		STATEMENT_END,
 		PRINT,
 		NUMBER,
 		LABEL,
-		FACTOR
+		FACTOR,
+		IF_ELSE
 	}
 }

@@ -12,7 +12,7 @@ namespace Quack.File
 			return ReadFileToEnd(path);
 		}
 
-		public static string ReadFileToEnd(string path)
+		private static string ReadFileToEnd(string path)
 		{
 			var stringBuilder = new StringBuilder();
 

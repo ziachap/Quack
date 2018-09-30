@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using Quack.Lexer;
 using Quack.Lexer.TokenDefinitions;
 
@@ -9,11 +8,13 @@ namespace Quack.Parser
 {
 	public class Parser : IParser
 	{
-		private readonly IArithmeticExpressionParser _arithmeticExpressionParser;
+		private readonly IExpressionParser _expressionParser;
+		private readonly IBracketService _bracketService;
 
-		public Parser(IArithmeticExpressionParser arithmeticExpressionParser)
+		public Parser(IExpressionParser expressionParser, IBracketService bracketService)
 		{
-			_arithmeticExpressionParser = arithmeticExpressionParser;
+			_expressionParser = expressionParser;
+			_bracketService = bracketService;
 		}
 
 		public AstNode Parse(Queue<Token> tokens)
@@ -22,18 +23,23 @@ namespace Quack.Parser
 
 			var remainingTokens = new Queue<Token>(tokens);
 
-			var rootNode = new AstNode(AstNodeType.ROOT);
+			var statements = Statements(remainingTokens).ToList();
 
-			while (remainingTokens.Any())
+			var rootNode = new AstNode(AstNodeType.STATEMENTS, null, statements);
+			
+			return rootNode;
+		}
+		
+		private IEnumerable<AstNode> Statements(Queue<Token> tokens)
+		{
+			while (tokens.Any())
 			{
-				var statementNode = Statement(remainingTokens);
-				if (statementNode.Type != AstNodeType.STATEMENT_END)
+				var statement = Statement(tokens);
+				if (statement.Type != AstNodeType.STATEMENT_END)
 				{
-					rootNode.Children.Add(statementNode);
+					yield return statement;
 				}
 			}
-
-			return rootNode;
 		}
 
 		private AstNode Statement(Queue<Token> tokens)
@@ -49,10 +55,36 @@ namespace Quack.Parser
 					return Print(tokens);
 				case TokenType.STATEMENT_END:
 					return StatementEnd(tokens);
+				case TokenType.IF:
+					return If(tokens);
 				default:
 					throw new ParseException($"Unexpected token '{TokenTypeName(nextToken.Type)}'");
 			}
 		}
+
+		private AstNode If(Queue<Token> tokens)
+		{
+			var ifElseNode = new AstNode(AstNodeType.IF_ELSE);
+
+			Skip(tokens, TokenType.IF);
+			Skip(tokens, TokenType.OPEN_PARENTHESES);
+
+			var boolExpTokens = _bracketService.TakeTokensUntilCloseParentheses(tokens);
+			var boolExpNode = _expressionParser.ParseExpression(boolExpTokens);
+			ifElseNode.Children.Add(boolExpNode);
+
+			Skip(tokens, TokenType.OPEN_BRACES);
+
+			var ifStatementTokens = _bracketService.TakeTokensUntilCloseBraces(tokens);
+			var ifStatements = Statements(ifStatementTokens).ToList();
+			var ifStatementsNode = new AstNode(AstNodeType.STATEMENTS, null, ifStatements);
+			ifElseNode.Children.Add(ifStatementsNode);
+
+			// TODO: Peek for an else token here
+
+			return ifElseNode;
+		}
+
 
 		private AstNode StatementEnd(Queue<Token> tokens)
 		{
@@ -90,7 +122,7 @@ namespace Quack.Parser
 
 			Skip(tokens, TokenType.ASSIGN);
 
-			assignNode.Children.Add(_arithmeticExpressionParser.ParseExpression(tokens));
+			assignNode.Children.Add(_expressionParser.ParseExpression(tokens));
 			
 			return assignNode;
 		}
@@ -101,7 +133,7 @@ namespace Quack.Parser
 
 			Skip(tokens, TokenType.PRINT);
 			
-			printNode.Children.Add(_arithmeticExpressionParser.ParseExpression(tokens));
+			printNode.Children.Add(_expressionParser.ParseExpression(tokens));
 
 			return printNode;
 		}

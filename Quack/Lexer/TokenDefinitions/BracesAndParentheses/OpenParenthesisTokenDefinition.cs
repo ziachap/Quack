@@ -1,4 +1,4 @@
-namespace Quack.Lexer.TokenDefinitions
+namespace Quack.Lexer.TokenDefinitions.BracesAndParentheses
 {
 	public class OpenParenthesisTokenDefinition : ITokenDefinition
 	{

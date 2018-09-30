@@ -12,5 +12,7 @@ namespace Quack
 		public const string ASSIGN = "=";
 		public const string PRINT = "print";
 		public const string STATEMENT_END = ";";
+		public const string IF = "if";
+		public const string ELSE = "else";
 	}
 }
