@@ -58,13 +58,13 @@ namespace Quack.Parser
 				case TokenType.STATEMENT_END:
 					return StatementEnd(tokens);
 				case TokenType.IF:
-					return If(tokens);
+					return IfElse(tokens);
 				default:
 					throw new ParseException($"Unexpected token '{TokenTypeName(nextToken.Type)}'");
 			}
 		}
 
-		private AstNode If(Queue<Token> tokens)
+		private AstNode IfElse(Queue<Token> tokens)
 		{
 			var ifElseNode = new AstNode(AstNodeType.IF_ELSE);
 
