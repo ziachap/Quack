@@ -45,8 +45,13 @@ namespace Quack.Transpiler
 
 		private string Declare(AstNode node)
 		{
-			var label = node.Children.Single().Value;
-			return $"var {label}";
+			var child = node.Children.Single();
+
+			var declarationExpression = child.Type == AstNodeType.ASSIGN 
+				? Assign(child) 
+				: child.Value;
+
+			return $"var {declarationExpression}";
 		}
 
 		private string Print(AstNode node)

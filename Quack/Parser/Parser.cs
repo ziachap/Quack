@@ -67,12 +67,16 @@ namespace Quack.Parser
 
 			Skip(tokens, TokenType.DECLARE);
 			
-			var labelToken = tokens.Dequeue();
-			AssertTypeOrThrow(labelToken, TokenType.LABEL);
-			var labelNode = new AstNode(AstNodeType.LABEL, labelToken.Value);
-
-			declareNode.Children.Add(labelNode);
-
+			if (tokens.ElementAt(1).Type == TokenType.ASSIGN)
+			{
+				declareNode.Children.Add(Assign(tokens));
+			}
+			else
+			{
+				var labelToken = tokens.Dequeue();
+				declareNode.Children.Add(Label(labelToken));
+			}
+			
 			return declareNode;
 		}
 
@@ -102,8 +106,12 @@ namespace Quack.Parser
 			return printNode;
 		}
 		
-		private static AstNode Label(Token token) => new AstNode(AstNodeType.LABEL, token.Value);
-		
+		private static AstNode Label(Token token)
+		{
+			AssertTypeOrThrow(token, TokenType.LABEL);
+			return new AstNode(AstNodeType.LABEL, token.Value);
+		}
+
 		private static void Skip(Queue<Token> tokens, TokenType expectedType)
 		{
 			var token = tokens.Dequeue();

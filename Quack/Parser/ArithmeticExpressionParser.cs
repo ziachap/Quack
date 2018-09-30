@@ -33,12 +33,10 @@ namespace Quack.Parser
 		private AstNode Factor(Queue<Token> tokens)
 		{
 			var enclosedTokens = TakeTokensUntilCloseParentheses(tokens);
-			var nextToken = tokens.Any() ? tokens.Peek() : null;
-
 			var children = new[] { ParseExpression(enclosedTokens) }.ToList();
 			var factor = new AstNode(AstNodeType.FACTOR, null, children);
 
-			return nextToken != null && nextToken.Type == TokenType.ARITHMETIC_OPERATOR
+			return tokens.Any() && tokens.Peek().Type == TokenType.ARITHMETIC_OPERATOR
 				? ArithmeticOperation(tokens, factor)
 				: factor;
 		}
