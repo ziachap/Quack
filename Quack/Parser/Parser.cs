@@ -23,23 +23,25 @@ namespace Quack.Parser
 
 			var remainingTokens = new Queue<Token>(tokens);
 
-			var statements = Statements(remainingTokens).ToList();
-
-			var rootNode = new AstNode(AstNodeType.STATEMENTS, null, statements);
+			var rootNode = Statements(remainingTokens);
 			
 			return rootNode;
 		}
 		
-		private IEnumerable<AstNode> Statements(Queue<Token> tokens)
+		private AstNode Statements(Queue<Token> tokens)
 		{
+			var node = new AstNode(AstNodeType.STATEMENTS);
+
 			while (tokens.Any())
 			{
 				var statement = Statement(tokens);
 				if (statement.Type != AstNodeType.STATEMENT_END)
 				{
-					yield return statement;
+					node.Children.Add(statement);
 				}
 			}
+
+			return node;
 		}
 
 		private AstNode Statement(Queue<Token> tokens)
@@ -76,21 +78,19 @@ namespace Quack.Parser
 			Skip(tokens, TokenType.OPEN_BRACES);
 
 			var ifStatementTokens = _bracketService.TakeTokensUntilCloseBraces(tokens);
-			var ifStatements = Statements(ifStatementTokens).ToList();
-			var ifStatementsNode = new AstNode(AstNodeType.STATEMENTS, null, ifStatements);
+			var ifStatementsNode = Statements(ifStatementTokens);
 			ifElseNode.Children.Add(ifStatementsNode);
-
-			// TODO: Peek for an else token here
+			
+			if (tokens.Any() && tokens.Peek().Type == TokenType.ELSE)
+			{
+				Skip(tokens, TokenType.ELSE);
+				Skip(tokens, TokenType.OPEN_BRACES);
+				var elseStatementTokens = _bracketService.TakeTokensUntilCloseBraces(tokens);
+				var elseStatementsNode = Statements(elseStatementTokens);
+				ifElseNode.Children.Add(elseStatementsNode);
+			}
 
 			return ifElseNode;
-		}
-
-
-		private AstNode StatementEnd(Queue<Token> tokens)
-		{
-			var statementEndNode = new AstNode(AstNodeType.STATEMENT_END);
-			Skip(tokens, TokenType.STATEMENT_END);
-			return statementEndNode;
 		}
 
 		private AstNode Declare(Queue<Token> tokens)
@@ -137,7 +137,14 @@ namespace Quack.Parser
 
 			return printNode;
 		}
-		
+
+		private AstNode StatementEnd(Queue<Token> tokens)
+		{
+			var statementEndNode = new AstNode(AstNodeType.STATEMENT_END);
+			Skip(tokens, TokenType.STATEMENT_END);
+			return statementEndNode;
+		}
+
 		private static AstNode Label(Token token)
 		{
 			AssertTypeOrThrow(token, TokenType.LABEL);

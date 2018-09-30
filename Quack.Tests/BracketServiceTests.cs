@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using Quack.Lexer;
@@ -34,6 +35,7 @@ namespace Quack.Tests
 		public void TakeTokensUntilClose_Returns_Tokens_Until_Matching_Close_Token(TokenType openType, TokenType closeType)
 		{
 			var tokens = ValidTokens(openType, closeType);
+
 			var result = Act(tokens, openType, closeType);
 
 			Assert.That(result.Count, Is.EqualTo(7));
@@ -46,6 +48,7 @@ namespace Quack.Tests
 		public void TakeTokensUntilClose_Dequeues_Tokens_Up_To_Matching_Close_Token(TokenType openType, TokenType closeType)
 		{
 			var tokens = ValidTokens(openType, closeType);
+
 			var result = Act(tokens, openType, closeType);
 
 			Assert.That(tokens.Count, Is.EqualTo(2));

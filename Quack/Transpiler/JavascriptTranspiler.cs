@@ -30,7 +30,7 @@ namespace Quack.Transpiler
 			var statements = string.Empty;
 			foreach (var childNode in node.Children)
 			{
-				statements += Indentation() + Statement(childNode) + StatementEnd();
+				statements += Indentation() + Statement(childNode);
 			}
 			return statements;
 		}
@@ -40,13 +40,13 @@ namespace Quack.Transpiler
 			switch (node.Type)
 			{
 				case AstNodeType.DECLARE:
-					return Declare(node);
+					return Declare(node) + StatementEnd();
 				case AstNodeType.PRINT:
-					return Print(node);
+					return Print(node) + StatementEnd();
 				case AstNodeType.ASSIGN:
-					return Assign(node);
+					return Assign(node) + StatementEnd();
 				case AstNodeType.IF_ELSE:
-					return IfElse(node);
+					return IfElse(node) + "\n";
 				default:
 					throw new TranspilerException("AstNode type not supported");
 			}
@@ -79,10 +79,18 @@ namespace Quack.Transpiler
 		private string IfElse(AstNode node)
 		{
 			var boolExp = Expression(node.Children.First());
-			IndentationLevel++;
-			var ifStatements = Statements(node.Children.ElementAt(1));
-			IndentationLevel--;
-			return $"if ({boolExp}) {{\n{ifStatements}}}";
+			var ifStatements = Indented(() => Statements(node.Children.ElementAt(1)));
+			var ifElseOutput = $"if ({boolExp}) {{\n{ifStatements}}}";
+
+			if (HasElse())
+			{
+				var elseStatements = Indented(() => Statements(node.Children.ElementAt(2)));
+				ifElseOutput += $"\nelse {{\n{elseStatements}}}";
+			}
+
+			return ifElseOutput;
+
+			bool HasElse() => node.Children.Count > 2;
 		}
 
 		private string Expression(AstNode node)
@@ -108,5 +116,13 @@ namespace Quack.Transpiler
 		private string StatementEnd() => ";\n";
 
 		private string Indentation() => new string(' ', 2 * IndentationLevel);
+
+		private string Indented(Func<string> func)
+		{
+			IndentationLevel++;
+			var output = func();
+			IndentationLevel--;
+			return output;
+		}
 	}
 }
