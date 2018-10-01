@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Quack.Lexer;
 using Quack.Lexer.TokenDefinitions;

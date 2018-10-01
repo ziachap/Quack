@@ -10,10 +10,10 @@ namespace Quack.Parser.Brackets
 		public TokenQueue TakeEnclosedTokens(TokenQueue tokens, BracketSet bracketSet)
 		{
 			tokens.Skip(bracketSet.OpenType);
-			var parenthesisStack = new Stack<TokenType>(new[] { bracketSet.OpenType });
+			var bracketStack = new Stack<TokenType>(new[] { bracketSet.OpenType });
 			var enclosedTokens = new TokenQueue();
 
-			while (parenthesisStack.Any())
+			while (bracketStack.Any())
 			{
 				if (!tokens.Any())
 				{
@@ -23,13 +23,13 @@ namespace Quack.Parser.Brackets
 				var nextToken = tokens.Dequeue();
 				if (nextToken.Type == bracketSet.OpenType)
 				{
-					parenthesisStack.Push(bracketSet.OpenType);
+					bracketStack.Push(bracketSet.OpenType);
 					enclosedTokens.Enqueue(nextToken);
 				}
 				else if (nextToken.Type == bracketSet.CloseType)
 				{
-					parenthesisStack.Pop();
-					if (parenthesisStack.Any())
+					bracketStack.Pop();
+					if (bracketStack.Any())
 					{
 						enclosedTokens.Enqueue(nextToken);
 					}
