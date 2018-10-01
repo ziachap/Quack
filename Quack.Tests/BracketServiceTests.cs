@@ -4,6 +4,7 @@ using NUnit.Framework;
 using Quack.Lexer;
 using Quack.Lexer.TokenDefinitions;
 using Quack.Parser;
+using Quack.Parser.Brackets;
 
 namespace Quack.Tests
 {
@@ -26,16 +27,20 @@ namespace Quack.Tests
 			new Token(TokenType.NUMBER, "num4")
 		});
 
-		private Queue<Token> Act(TokenQueue tokens, TokenType openType, TokenType closeType) 
-			=> Service().TakeTokensUntilClose(tokens, openType, closeType);
+		private BracketSet BracketSet(TokenType openType, TokenType closeType) 
+			=> new BracketSet(openType, closeType);
+
+		private Queue<Token> Act(TokenQueue tokens, BracketSet bracketSet) 
+			=> Service().TakeEnclosedTokens(tokens, bracketSet);
 
 		[TestCase(TokenType.OPEN_PARENTHESES, TokenType.CLOSE_PARENTHESES)]
 		[TestCase(TokenType.OPEN_BRACES, TokenType.CLOSE_BRACES)]
 		public void TakeTokensUntilClose_Returns_Tokens_Until_Matching_Close_Token(TokenType openType, TokenType closeType)
 		{
+			var bracketSet = BracketSet(openType, closeType);
 			var tokens = ValidTokens(openType, closeType);
 
-			var result = Act(tokens, openType, closeType);
+			var result = Act(tokens, bracketSet);
 
 			Assert.That(result.Count, Is.EqualTo(7));
 			Assert.That(result.First().Value, Is.EqualTo("num1"));
@@ -46,9 +51,10 @@ namespace Quack.Tests
 		[TestCase(TokenType.OPEN_BRACES, TokenType.CLOSE_BRACES)]
 		public void TakeTokensUntilClose_Dequeues_Tokens_Up_To_Matching_Close_Token(TokenType openType, TokenType closeType)
 		{
+			var bracketSet = BracketSet(openType, closeType);
 			var tokens = ValidTokens(openType, closeType);
 
-			var result = Act(tokens, openType, closeType);
+			var result = Act(tokens, bracketSet);
 
 			Assert.That(tokens.Count, Is.EqualTo(2));
 			Assert.That(tokens.First().Value, Is.EqualTo("op3"));
@@ -59,6 +65,7 @@ namespace Quack.Tests
 		[TestCase(TokenType.OPEN_BRACES, TokenType.CLOSE_BRACES)]
 		public void TakeTokensUntilClose_Throws_ParseException_When_Matching_Close_Token_Not_Found(TokenType openType, TokenType closeType)
 		{
+			var bracketSet = BracketSet(openType, closeType);
 			var invalidTokens = new TokenQueue(new[]
 			{
 				new Token(TokenType.NUMBER, "num1"),
@@ -72,7 +79,7 @@ namespace Quack.Tests
 				new Token(TokenType.NUMBER, "num4")
 			});
 
-			Assert.Throws<ParseException>(() => Act(invalidTokens, openType, closeType));
+			Assert.Throws<ParseException>(() => Act(invalidTokens, bracketSet));
 		}
 	}
 }

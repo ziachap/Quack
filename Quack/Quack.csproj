@@ -48,6 +48,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Parser\Brackets\BracketService.cs" />
+    <Compile Include="Parser\Brackets\BracketSets.cs" />
     <Compile Include="File\FileReader.cs" />
     <Compile Include="File\FileWriter.cs" />
     <Compile Include="File\IFileReader.cs" />
@@ -79,7 +81,7 @@
     <Compile Include="Parser\ExpressionParser.cs" />
     <Compile Include="Parser\AstNode.cs" />
     <Compile Include="Parser\IExpressionParser.cs" />
-    <Compile Include="Parser\IBracketService.cs" />
+    <Compile Include="Parser\Brackets\IBracketService.cs" />
     <Compile Include="Parser\IParser.cs" />
     <Compile Include="Parser\ParseException.cs" />
     <Compile Include="Parser\Parser.cs" />

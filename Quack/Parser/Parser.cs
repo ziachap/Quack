@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Quack.Lexer;
 using Quack.Lexer.TokenDefinitions;
+using Quack.Parser.Brackets;
 
 namespace Quack.Parser
 {
@@ -46,8 +47,7 @@ namespace Quack.Parser
 		
 		private AstNode BracedStatements(TokenQueue tokens)
 		{
-			tokens.Skip(TokenType.OPEN_BRACES);
-			var statementTokens = _bracketService.TakeTokensUntilCloseBraces(tokens);
+			var statementTokens = _bracketService.TakeEnclosedTokens(tokens, BracketSets.Braces);
 			return Statements(statementTokens);
 		}
 
@@ -76,9 +76,8 @@ namespace Quack.Parser
 			var ifElseNode = new AstNode(AstNodeType.IF_ELSE);
 
 			tokens.Skip(TokenType.IF);
-			tokens.Skip(TokenType.OPEN_PARENTHESES);
 
-			var boolExpTokens = _bracketService.TakeTokensUntilCloseParentheses(tokens);
+			var boolExpTokens = _bracketService.TakeEnclosedTokens(tokens, BracketSets.Parentheses);
 			var boolExpNode = _expressionParser.ParseExpression(boolExpTokens);
 			ifElseNode.Children.Add(boolExpNode);
 			ifElseNode.Children.Add(BracedStatements(tokens));

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Quack.Lexer;
+﻿using Quack.Lexer;
 
 namespace Quack.Parser
 {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Quack.Lexer;
 using Quack.Lexer.TokenDefinitions;
+using Quack.Parser.Brackets;
 
 namespace Quack.Parser
 {
@@ -17,33 +18,29 @@ namespace Quack.Parser
 
 		public  AstNode ParseExpression(TokenQueue tokens)
 		{
-			var currentToken = tokens.Dequeue();
-
-			if (currentToken.Type == TokenType.OPEN_PARENTHESES)
+			if (tokens.IsNextType(TokenType.OPEN_PARENTHESES))
 			{
 				return Factor(tokens);
 			}
-			else if (tokens.Count > 1 && tokens.Peek().Type == TokenType.ARITHMETIC_OPERATOR)
+			if (tokens.IsNextType(TokenType.ARITHMETIC_OPERATOR, 1))
 			{
-				return Operation(tokens, LabelOrConstant(currentToken), AstNodeType.ARITHMETIC_OPERATOR);
+				return Operation(tokens, AstNodeType.ARITHMETIC_OPERATOR);
 			}
-			else if (tokens.Count > 1 && tokens.Peek().Type == TokenType.BOOLEAN_OPERATOR)
+			if (tokens.IsNextType(TokenType.BOOLEAN_OPERATOR, 1))
 			{
-				return Operation(tokens, LabelOrConstant(currentToken), AstNodeType.BOOLEAN_OPERATOR);
+				return Operation(tokens, AstNodeType.BOOLEAN_OPERATOR);
 			}
-			else if (currentToken.Type == TokenType.LABEL || currentToken.Type == TokenType.NUMBER)
+			if (tokens.IsNextType(TokenType.LABEL) || tokens.IsNextType(TokenType.NUMBER))
 			{
-				return LabelOrConstant(currentToken);
+				return LabelOrConstant(tokens);
 			}
-			else
-			{
-				throw new ParseException("Unexpected token: " + TokenTypeName(currentToken.Type));
-			}
+
+			throw new ParseException("Unexpected token: " + TokenTypeName(tokens.Peek().Type));
 		}
 
 		private AstNode Factor(TokenQueue tokens)
 		{
-			var enclosedTokens = _bracketService.TakeTokensUntilCloseParentheses(tokens);
+			var enclosedTokens = _bracketService.TakeEnclosedTokens(tokens, BracketSets.Parentheses);
 			var children = new[] { ParseExpression(enclosedTokens) }.ToList();
 			var factor = new AstNode(AstNodeType.FACTOR, null, children);
 
@@ -52,25 +49,28 @@ namespace Quack.Parser
 				switch (tokens.Peek().Type)
 				{
 					case TokenType.ARITHMETIC_OPERATOR:
-						return Operation(tokens, factor, AstNodeType.ARITHMETIC_OPERATOR);
+						return Operation(tokens, AstNodeType.ARITHMETIC_OPERATOR, factor);
 					case TokenType.BOOLEAN_OPERATOR:
-						return Operation(tokens, factor, AstNodeType.BOOLEAN_OPERATOR);
+						return Operation(tokens, AstNodeType.BOOLEAN_OPERATOR, factor);
 				}
 			}
 
 			return factor;
 		}
 
-		private AstNode Operation(TokenQueue tokens, AstNode leftNode, AstNodeType operationType)
+		private AstNode Operation(TokenQueue tokens, AstNodeType operationType) 
+			=> Operation(tokens, operationType, LabelOrConstant(tokens));
+
+		private AstNode Operation(TokenQueue tokens, AstNodeType operationType, AstNode leftNode)
 		{
 			var op = tokens.Dequeue();
 			var children = new List<AstNode> { leftNode, ParseExpression(tokens) };
-
 			return new AstNode(operationType, op.Value, children);
 		}
-		
-		private AstNode LabelOrConstant(Token token)
+
+		private AstNode LabelOrConstant(TokenQueue tokens)
 		{
+			var token = tokens.Dequeue();
 			switch (token.Type)
 			{
 				case TokenType.LABEL:
