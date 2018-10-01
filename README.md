@@ -25,3 +25,5 @@ print b;
 ```
 
 Quack code is transpiled into JavaScript code. I plan on adding more transpilation targets in the future and perhaps even compilation!
+
+![alt tag](http://i64.tinypic.com/2mrumnc.jpg)
