@@ -108,10 +108,10 @@ namespace Quack.Parser
 
 		private AstNode Declare(TokenQueue tokens)
 		{
-			var declareNode = new AstNode(AstNodeType.DECLARE);
-
-			tokens.Skip(TokenType.DECLARE);
+			var declareNode = new AstNode(AstNodeType.DECLARE, tokens.ElementAt(1).Value);
 			
+			tokens.Skip(TokenType.DECLARE);
+
 			if (tokens.ElementAt(1).Type == TokenType.ASSIGN)
 			{
 				declareNode.Children.Add(Assign(tokens));

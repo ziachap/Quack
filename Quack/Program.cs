@@ -6,6 +6,7 @@ using Quack.Lexer.TokenDefinitions;
 using Quack.Lexer.TokenDefinitions.BracesAndParentheses;
 using Quack.Parser;
 using Quack.Parser.Brackets;
+using Quack.SemanticValidation;
 using Quack.Transpiler;
 
 namespace Quack
@@ -32,9 +33,12 @@ namespace Quack
 			kernel.Bind<IFileWriter>().To<FileWriter>();
 			kernel.Bind<ISourceSanitizer>().To<SourceSanitizer>();
 			kernel.Bind<ILexer>().To<Lexer.Lexer>();
+
 			kernel.Bind<IParser>().To<Parser.Parser>();
 			kernel.Bind<IExpressionParser>().To<ExpressionParser>();
 			kernel.Bind<IBracketService>().To<BracketService>();
+
+			kernel.Bind<ISemanticValidatorService>().To<SemanticValidatorService>();
 			kernel.Bind<ITranspiler>().To<JavascriptTranspiler>();
 			BindTokenDefinitions(kernel);
 

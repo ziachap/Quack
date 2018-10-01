@@ -3,6 +3,7 @@ using Quack.File;
 using Quack.Lexer;
 using Quack.Lexer.TokenDefinitions;
 using Quack.Parser;
+using Quack.SemanticValidation;
 using Quack.Transpiler;
 
 namespace Quack
@@ -18,13 +19,15 @@ namespace Quack
 		private readonly ISourceSanitizer _sanitizer;
 		private readonly ILexer _lexer;
 		private readonly IParser _parser;
+		private readonly ISemanticValidatorService _semanticValidator;
 		private readonly ITranspiler _transpiler;
 		private readonly IFileWriter _writer;
 
 		public Compiler(IFileReader reader,
 			ISourceSanitizer sanitizer,
 			ILexer lexer,
-			IParser parser,
+			IParser parser, 
+			ISemanticValidatorService semanticValidator,
 			ITranspiler transpiler,
 			IFileWriter writer)
 		{
@@ -32,6 +35,7 @@ namespace Quack
 			_sanitizer = sanitizer;
 			_lexer = lexer;
 			_parser = parser;
+			_semanticValidator = semanticValidator;
 			_transpiler = transpiler;
 			_writer = writer;
 		}
@@ -59,7 +63,9 @@ namespace Quack
 
 			var ast = _parser.Parse(tokens);
 			PrintAstTree(ast);
-			
+
+			_semanticValidator.Validate(ast);
+
 			var transpiledCode = _transpiler.Transpile(ast);
 			Console.WriteLine(transpiledCode);
 
