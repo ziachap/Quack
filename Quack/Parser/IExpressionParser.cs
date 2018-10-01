@@ -5,6 +5,6 @@ namespace Quack.Parser
 {
 	public interface IExpressionParser
 	{
-		AstNode ParseExpression(Queue<Token> tokens);
+		AstNode ParseExpression(TokenQueue tokens);
 	}
 }

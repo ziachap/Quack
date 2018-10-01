@@ -17,18 +17,18 @@ namespace Quack.Parser
 			_bracketService = bracketService;
 		}
 
-		public AstNode Parse(Queue<Token> tokens)
+		public AstNode Parse(TokenQueue tokens)
 		{
 			Console.WriteLine("--- PARSER ---");
 
-			var remainingTokens = new Queue<Token>(tokens);
+			var remainingTokens = new TokenQueue(tokens);
 
 			var rootNode = Statements(remainingTokens);
 			
 			return rootNode;
 		}
 		
-		private AstNode Statements(Queue<Token> tokens)
+		private AstNode Statements(TokenQueue tokens)
 		{
 			var node = new AstNode(AstNodeType.STATEMENTS);
 
@@ -44,14 +44,14 @@ namespace Quack.Parser
 			return node;
 		}
 		
-		private AstNode BracedStatements(Queue<Token> tokens)
+		private AstNode BracedStatements(TokenQueue tokens)
 		{
-			Skip(tokens, TokenType.OPEN_BRACES);
+			tokens.Skip(TokenType.OPEN_BRACES);
 			var statementTokens = _bracketService.TakeTokensUntilCloseBraces(tokens);
 			return Statements(statementTokens);
 		}
 
-		private AstNode Statement(Queue<Token> tokens)
+		private AstNode Statement(TokenQueue tokens)
 		{
 			var nextToken = tokens.Peek();
 			switch (nextToken.Type)
@@ -71,22 +71,22 @@ namespace Quack.Parser
 			}
 		}
 
-		private AstNode IfElse(Queue<Token> tokens)
+		private AstNode IfElse(TokenQueue tokens)
 		{
 			var ifElseNode = new AstNode(AstNodeType.IF_ELSE);
 
-			Skip(tokens, TokenType.IF);
-			Skip(tokens, TokenType.OPEN_PARENTHESES);
+			tokens.Skip(TokenType.IF);
+			tokens.Skip(TokenType.OPEN_PARENTHESES);
 
 			var boolExpTokens = _bracketService.TakeTokensUntilCloseParentheses(tokens);
 			var boolExpNode = _expressionParser.ParseExpression(boolExpTokens);
 			ifElseNode.Children.Add(boolExpNode);
 			ifElseNode.Children.Add(BracedStatements(tokens));
 			
-			if (SafePeekType(tokens, TokenType.ELSE))
+			if (tokens.IsNextType(TokenType.ELSE))
 			{
-				Skip(tokens, TokenType.ELSE);
-				ifElseNode.Children.Add(SafePeekType(tokens, TokenType.IF) 
+				tokens.Skip(TokenType.ELSE);
+				ifElseNode.Children.Add(tokens.IsNextType(TokenType.IF) 
 					? IfElse(tokens) 
 					: BracedStatements(tokens));
 			}
@@ -94,11 +94,11 @@ namespace Quack.Parser
 			return ifElseNode;
 		}
 
-		private AstNode Declare(Queue<Token> tokens)
+		private AstNode Declare(TokenQueue tokens)
 		{
 			var declareNode = new AstNode(AstNodeType.DECLARE);
 
-			Skip(tokens, TokenType.DECLARE);
+			tokens.Skip(TokenType.DECLARE);
 			
 			if (tokens.ElementAt(1).Type == TokenType.ASSIGN)
 			{
@@ -113,61 +113,44 @@ namespace Quack.Parser
 			return declareNode;
 		}
 
-		private AstNode Assign(Queue<Token> tokens)
+		private AstNode Assign(TokenQueue tokens)
 		{
 			var assignNode = new AstNode(AstNodeType.ASSIGN);
 
 			var assignmentTarget = tokens.Dequeue();
-			AssertTypeOrThrow(assignmentTarget, TokenType.LABEL);
+			assignmentTarget.AssertType(TokenType.LABEL);
 			assignNode.Children.Add(Label(assignmentTarget));
 
-			Skip(tokens, TokenType.ASSIGN);
+			tokens.Skip(TokenType.ASSIGN);
 
 			assignNode.Children.Add(_expressionParser.ParseExpression(tokens));
 			
 			return assignNode;
 		}
 
-		private AstNode Print(Queue<Token> tokens)
+		private AstNode Print(TokenQueue tokens)
 		{
 			var printNode = new AstNode(AstNodeType.PRINT);
 
-			Skip(tokens, TokenType.PRINT);
+			tokens.Skip(TokenType.PRINT);
 			
 			printNode.Children.Add(_expressionParser.ParseExpression(tokens));
 
 			return printNode;
 		}
 
-		private AstNode StatementEnd(Queue<Token> tokens)
+		private AstNode StatementEnd(TokenQueue tokens)
 		{
 			var statementEndNode = new AstNode(AstNodeType.STATEMENT_END);
-			Skip(tokens, TokenType.STATEMENT_END);
+			tokens.Skip(TokenType.STATEMENT_END);
 			return statementEndNode;
 		}
 
 		private static AstNode Label(Token token)
 		{
-			AssertTypeOrThrow(token, TokenType.LABEL);
+			token.AssertType(TokenType.LABEL);
 			return new AstNode(AstNodeType.LABEL, token.Value);
 		}
-
-		private static void Skip(Queue<Token> tokens, TokenType expectedType)
-		{
-			var token = tokens.Dequeue();
-			AssertTypeOrThrow(token, expectedType);
-		}
-
-		private static void AssertTypeOrThrow(Token token, TokenType expectedType)
-		{
-			if (token.Type != expectedType)
-			{
-				throw new ParseException($"Expected [{TokenTypeName(expectedType)}] but got {token}");
-			}
-		}
-
-		private static bool SafePeekType(Queue<Token> tokens, TokenType type) 
-			=> tokens.Any() && tokens.Peek().Type == type;
 
 		private static string TokenTypeName(TokenType type) 
 			=> Enum.GetName(typeof(TokenType), type);

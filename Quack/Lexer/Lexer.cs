@@ -14,13 +14,13 @@ namespace Quack.Lexer
 			_tokenDefinitions = tokenDefinitions;
 		}
 
-		public Queue<Token> Tokenise(string input)
+		public TokenQueue Tokenise(string input)
 		{
 			Console.WriteLine("--- LEXER ---");
 
 			var splitInput = input.Split(' ');
 
-			var tokenQueue = new Queue<Token>();
+			var tokenQueue = new TokenQueue();
 
 			foreach (var term in splitInput)
 			{

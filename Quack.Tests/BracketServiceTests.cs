@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using Quack.Lexer;
@@ -13,7 +12,7 @@ namespace Quack.Tests
 	{
 		private IBracketService Service() => new BracketService();
 		
-		private Queue<Token> ValidTokens(TokenType openType, TokenType closeType) => new Queue<Token>(new[]
+		private TokenQueue ValidTokens(TokenType openType, TokenType closeType) => new TokenQueue(new[]
 		{
 			new Token(TokenType.NUMBER, "num1"),
 			new Token(TokenType.ARITHMETIC_OPERATOR, "op1"),
@@ -27,7 +26,7 @@ namespace Quack.Tests
 			new Token(TokenType.NUMBER, "num4")
 		});
 
-		private Queue<Token> Act(Queue<Token> tokens, TokenType openType, TokenType closeType) 
+		private Queue<Token> Act(TokenQueue tokens, TokenType openType, TokenType closeType) 
 			=> Service().TakeTokensUntilClose(tokens, openType, closeType);
 
 		[TestCase(TokenType.OPEN_PARENTHESES, TokenType.CLOSE_PARENTHESES)]
@@ -60,7 +59,7 @@ namespace Quack.Tests
 		[TestCase(TokenType.OPEN_BRACES, TokenType.CLOSE_BRACES)]
 		public void TakeTokensUntilClose_Throws_ParseException_When_Matching_Close_Token_Not_Found(TokenType openType, TokenType closeType)
 		{
-			var invalidTokens = new Queue<Token>(new[]
+			var invalidTokens = new TokenQueue(new[]
 			{
 				new Token(TokenType.NUMBER, "num1"),
 				new Token(TokenType.ARITHMETIC_OPERATOR, "op1"),

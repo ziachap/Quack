@@ -15,7 +15,7 @@ namespace Quack.Parser
 			_bracketService = bracketService;
 		}
 
-		public  AstNode ParseExpression(Queue<Token> tokens)
+		public  AstNode ParseExpression(TokenQueue tokens)
 		{
 			var currentToken = tokens.Dequeue();
 
@@ -41,7 +41,7 @@ namespace Quack.Parser
 			}
 		}
 
-		private AstNode Factor(Queue<Token> tokens)
+		private AstNode Factor(TokenQueue tokens)
 		{
 			var enclosedTokens = _bracketService.TakeTokensUntilCloseParentheses(tokens);
 			var children = new[] { ParseExpression(enclosedTokens) }.ToList();
@@ -61,7 +61,7 @@ namespace Quack.Parser
 			return factor;
 		}
 
-		private AstNode Operation(Queue<Token> tokens, AstNode leftNode, AstNodeType operationType)
+		private AstNode Operation(TokenQueue tokens, AstNode leftNode, AstNodeType operationType)
 		{
 			var op = tokens.Dequeue();
 			var children = new List<AstNode> { leftNode, ParseExpression(tokens) };
@@ -83,6 +83,7 @@ namespace Quack.Parser
 		}
 
 		private static AstNode Label(Token token) => new AstNode(AstNodeType.LABEL, token.Value);
+
 		private static AstNode Number(Token token) => new AstNode(AstNodeType.NUMBER, token.Value);
 		
 		private static string TokenTypeName(TokenType type) => Enum.GetName(typeof(TokenType), type);

@@ -7,23 +7,23 @@ namespace Quack.Parser
 {
 	public interface IBracketService
 	{
-		Queue<Token> TakeTokensUntilCloseParentheses(Queue<Token> tokens);
-		Queue<Token> TakeTokensUntilCloseBraces(Queue<Token> tokens);
-		Queue<Token> TakeTokensUntilClose(Queue<Token> tokens, TokenType openType, TokenType closeType);
+		TokenQueue TakeTokensUntilCloseParentheses(TokenQueue tokens);
+		TokenQueue TakeTokensUntilCloseBraces(TokenQueue tokens);
+		TokenQueue TakeTokensUntilClose(TokenQueue tokens, TokenType openType, TokenType closeType);
 	}
 
 	public class BracketService : IBracketService
 	{
-		public Queue<Token> TakeTokensUntilCloseParentheses(Queue<Token> tokens) 
+		public TokenQueue TakeTokensUntilCloseParentheses(TokenQueue tokens) 
 			=> TakeTokensUntilClose(tokens, TokenType.OPEN_PARENTHESES, TokenType.CLOSE_PARENTHESES);
 
-		public Queue<Token> TakeTokensUntilCloseBraces(Queue<Token> tokens)
+		public TokenQueue TakeTokensUntilCloseBraces(TokenQueue tokens)
 			=> TakeTokensUntilClose(tokens, TokenType.OPEN_BRACES, TokenType.CLOSE_BRACES);
 
-		public Queue<Token> TakeTokensUntilClose(Queue<Token> tokens, TokenType openType, TokenType closeType)
+		public TokenQueue TakeTokensUntilClose(TokenQueue tokens, TokenType openType, TokenType closeType)
 		{
 			var parenthesisStack = new Stack<TokenType>(new[] { openType });
-			var enclosedTokens = new Queue<Token>();
+			var enclosedTokens = new TokenQueue();
 
 			while (parenthesisStack.Any())
 			{

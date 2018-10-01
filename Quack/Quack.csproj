@@ -75,6 +75,7 @@
     <Compile Include="Lexer\TokenDefinitions\PrintTokenDefinition.cs" />
     <Compile Include="Lexer\TokenDefinitions\StatementEndTokenDefinition.cs" />
     <Compile Include="Lexer\TokenDefinitions\LabelTokenDefinition.cs" />
+    <Compile Include="Lexer\TokenQueue.cs" />
     <Compile Include="Parser\ExpressionParser.cs" />
     <Compile Include="Parser\AstNode.cs" />
     <Compile Include="Parser\IExpressionParser.cs" />
