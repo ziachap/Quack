@@ -43,6 +43,13 @@ namespace Quack.Parser
 
 			return node;
 		}
+		
+		private AstNode BracedStatements(Queue<Token> tokens)
+		{
+			Skip(tokens, TokenType.OPEN_BRACES);
+			var statementTokens = _bracketService.TakeTokensUntilCloseBraces(tokens);
+			return Statements(statementTokens);
+		}
 
 		private AstNode Statement(Queue<Token> tokens)
 		{
@@ -74,20 +81,14 @@ namespace Quack.Parser
 			var boolExpTokens = _bracketService.TakeTokensUntilCloseParentheses(tokens);
 			var boolExpNode = _expressionParser.ParseExpression(boolExpTokens);
 			ifElseNode.Children.Add(boolExpNode);
-
-			Skip(tokens, TokenType.OPEN_BRACES);
-
-			var ifStatementTokens = _bracketService.TakeTokensUntilCloseBraces(tokens);
-			var ifStatementsNode = Statements(ifStatementTokens);
-			ifElseNode.Children.Add(ifStatementsNode);
+			ifElseNode.Children.Add(BracedStatements(tokens));
 			
-			if (tokens.Any() && tokens.Peek().Type == TokenType.ELSE)
+			if (SafePeekType(tokens, TokenType.ELSE))
 			{
 				Skip(tokens, TokenType.ELSE);
-				Skip(tokens, TokenType.OPEN_BRACES);
-				var elseStatementTokens = _bracketService.TakeTokensUntilCloseBraces(tokens);
-				var elseStatementsNode = Statements(elseStatementTokens);
-				ifElseNode.Children.Add(elseStatementsNode);
+				ifElseNode.Children.Add(SafePeekType(tokens, TokenType.IF) 
+					? IfElse(tokens) 
+					: BracedStatements(tokens));
 			}
 
 			return ifElseNode;
@@ -165,6 +166,10 @@ namespace Quack.Parser
 			}
 		}
 
-		private static string TokenTypeName(TokenType type) => Enum.GetName(typeof(TokenType), type);
+		private static bool SafePeekType(Queue<Token> tokens, TokenType type) 
+			=> tokens.Any() && tokens.Peek().Type == type;
+
+		private static string TokenTypeName(TokenType type) 
+			=> Enum.GetName(typeof(TokenType), type);
 	}
 }

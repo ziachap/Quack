@@ -48,7 +48,7 @@ namespace Quack.Transpiler
 				case AstNodeType.IF_ELSE:
 					return IfElse(node) + "\n";
 				default:
-					throw new TranspilerException("AstNode type not supported");
+					throw new TranspilerException("AstNodeType not supported");
 			}
 		}
 
@@ -80,17 +80,26 @@ namespace Quack.Transpiler
 		{
 			var boolExp = Expression(node.Children.First());
 			var ifStatements = Indented(() => Statements(node.Children.ElementAt(1)));
-			var ifElseOutput = $"if ({boolExp}) {{\n{ifStatements}}}";
+			var ifElseOutput = $"if ({boolExp}) {{\n{ifStatements}{Indentation()}}}";
 
 			if (HasElse())
 			{
-				var elseStatements = Indented(() => Statements(node.Children.ElementAt(2)));
-				ifElseOutput += $"\nelse {{\n{elseStatements}}}";
+				var elseChild = node.Children.ElementAt(2);;
+				if (IsElseChainedToIf(elseChild))
+				{
+					ifElseOutput += $"\nelse {IfElse(elseChild)}";
+				}
+				else
+				{
+					var elseStatements = Indented(() => Statements(node.Children.ElementAt(2)));
+					ifElseOutput += $"\nelse {{\n{elseStatements}{Indentation()}}}";
+				}
 			}
 
 			return ifElseOutput;
 
 			bool HasElse() => node.Children.Count > 2;
+			bool IsElseChainedToIf(AstNode elseChild) => elseChild.Type == AstNodeType.IF_ELSE;
 		}
 
 		private string Expression(AstNode node)

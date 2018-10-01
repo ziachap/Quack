@@ -28,7 +28,7 @@ namespace Quack.Lexer
 
 				if (tokenDefinition == null)
 				{
-					throw new TermNotSupportedException($"The term {term} could not be tokenised");
+					throw new TermNotSupportedException($"The term '{term}' could not be tokenised");
 				}
 				
 				tokenQueue.Enqueue(tokenDefinition.GetToken(term));

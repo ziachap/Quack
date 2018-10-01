@@ -8,7 +8,6 @@ namespace Quack.Lexer.TokenDefinitions
 
 	public enum TokenType
 	{
-		ROOT,
 		DECLARE,
 		ASSIGN,
 		ARITHMETIC_OPERATOR,
