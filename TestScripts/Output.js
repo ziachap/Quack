@@ -13,5 +13,10 @@ else if (1 < 5) {
 else {
   b = 1;
 }
+var c = 2;
+while (c < 5) {
+  c = c + 1;
+}
 console.log(a);
 console.log(b);
+console.log(c);

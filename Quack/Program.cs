@@ -5,6 +5,7 @@ using Quack.Lexer;
 using Quack.Lexer.TokenDefinitions;
 using Quack.Lexer.TokenDefinitions.BracesAndParentheses;
 using Quack.Parser;
+using Quack.Parser.Brackets;
 using Quack.Transpiler;
 
 namespace Quack
@@ -42,19 +43,26 @@ namespace Quack
 
 		private static void BindTokenDefinitions(IKernel kernel)
 		{
+			// keywords
 			kernel.Bind<ITokenDefinition>().To<DeclareTokenDefinition>();
 			kernel.Bind<ITokenDefinition>().To<IfTokenDefinition>();
 			kernel.Bind<ITokenDefinition>().To<ElseTokenDefinition>();
-			kernel.Bind<ITokenDefinition>().To<DeclareTokenDefinition>();
+			kernel.Bind<ITokenDefinition>().To<WhileTokenDefinition>();
+			kernel.Bind<ITokenDefinition>().To<PrintTokenDefinition>();
+
+			// symbols
 			kernel.Bind<ITokenDefinition>().To<AssignTokenDefinition>();
 			kernel.Bind<ITokenDefinition>().To<ArithmeticOperatorTokenDefinition>();
 			kernel.Bind<ITokenDefinition>().To<BooleanOperatorTokenDefinition>();
 			kernel.Bind<ITokenDefinition>().To<StatementEndTokenDefinition>();
-			kernel.Bind<ITokenDefinition>().To<PrintTokenDefinition>();
+
+			// brackets
 			kernel.Bind<ITokenDefinition>().To<OpenParenthesisTokenDefinition>();
 			kernel.Bind<ITokenDefinition>().To<CloseParenthesisTokenDefinition>();
 			kernel.Bind<ITokenDefinition>().To<OpenBracesTokenDefinition>();
 			kernel.Bind<ITokenDefinition>().To<CloseBracesTokenDefinition>();
+
+			// labels/values
 			kernel.Bind<ITokenDefinition>().To<NumberTokenDefinition>();
 			kernel.Bind<ITokenDefinition>().To<LabelTokenDefinition>();
 		}

@@ -47,6 +47,8 @@ namespace Quack.Transpiler
 					return Assign(node) + StatementEnd();
 				case AstNodeType.IF_ELSE:
 					return IfElse(node) + "\n";
+				case AstNodeType.WHILE:
+					return While(node) + "\n";
 				default:
 					throw new TranspilerException("AstNodeType not supported");
 			}
@@ -100,6 +102,13 @@ namespace Quack.Transpiler
 
 			bool HasElse() => node.Children.Count > 2;
 			bool IsElseChainedToIf(AstNode elseChild) => elseChild.Type == AstNodeType.IF_ELSE;
+		}
+
+		private string While(AstNode node)
+		{
+			var boolExp = Expression(node.Children.First());
+			var whileStatements = Indented(() => Statements(node.Children.ElementAt(1)));
+			return $"while ({boolExp}) {{\n{whileStatements}{Indentation()}}}";
 		}
 
 		private string Expression(AstNode node)

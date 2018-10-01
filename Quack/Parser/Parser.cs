@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Quack.Lexer;
 using Quack.Lexer.TokenDefinitions;
@@ -61,10 +62,12 @@ namespace Quack.Parser
 					return Assign(tokens);
 				case TokenType.PRINT:
 					return Print(tokens);
-				case TokenType.STATEMENT_END:
-					return StatementEnd(tokens);
 				case TokenType.IF:
 					return IfElse(tokens);
+				case TokenType.WHILE:
+					return While(tokens);
+				case TokenType.STATEMENT_END:
+					return StatementEnd(tokens);
 				default:
 					throw new ParseException($"Unexpected token '{TokenTypeName(nextToken.Type)}'");
 			}
@@ -90,6 +93,17 @@ namespace Quack.Parser
 			}
 
 			return ifElseNode;
+		}
+
+		private AstNode While(TokenQueue tokens)
+		{
+			tokens.Skip(TokenType.WHILE);
+
+			var boolExpTokens = _bracketService.TakeEnclosedTokens(tokens, BracketSets.Parentheses);
+			var boolExpNode = _expressionParser.ParseExpression(boolExpTokens);
+			var children = new List<AstNode> {boolExpNode, BracedStatements(tokens)};
+
+			return new AstNode(AstNodeType.WHILE, null, children);
 		}
 
 		private AstNode Declare(TokenQueue tokens)

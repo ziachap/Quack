@@ -21,6 +21,7 @@ namespace Quack.Lexer.TokenDefinitions
 		OPEN_BRACES,
 		CLOSE_BRACES,
 		IF,
-		ELSE
+		ELSE,
+		WHILE
 	}
 }

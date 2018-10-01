@@ -13,12 +13,12 @@ else if(1 < 5) {
 else {
 	b = 1;
 }
+
+declare c = 2
+while(c < 5) {
+	c = c + 1;
+}
+
 print a;
 print b;
-
-
-
-
-
-
-
+print c;

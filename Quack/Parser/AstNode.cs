@@ -45,6 +45,7 @@ namespace Quack.Parser
 		NUMBER,
 		LABEL,
 		FACTOR,
-		IF_ELSE
+		IF_ELSE,
+		WHILE
 	}
 }

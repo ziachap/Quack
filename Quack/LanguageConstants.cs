@@ -14,5 +14,6 @@ namespace Quack
 		public const string STATEMENT_END = ";";
 		public const string IF = "if";
 		public const string ELSE = "else";
+		public const string WHILE = "while";
 	}
 }
