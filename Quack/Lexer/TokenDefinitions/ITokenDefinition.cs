@@ -9,6 +9,7 @@ namespace Quack.Lexer.TokenDefinitions
 	public enum TokenType
 	{
 		DECLARE,
+		FUNC_DECLARE,
 		ASSIGN,
 		ARITHMETIC_OPERATOR,
 		BOOLEAN_OPERATOR,

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Quack.Parser;
 using Quack.SemanticValidation.Exceptions;
@@ -29,22 +30,26 @@ namespace Quack.SemanticValidation
 			switch (node.Type)
 			{
 				case AstNodeType.DECLARE:
-					Declare(node);
+					Declaration(node, Variable);
+					break;
+				case AstNodeType.FUNC_DEF:
+					Declaration(node, Function);
 					break;
 				case AstNodeType.LABEL:
+				case AstNodeType.FUNC_CALL:
 					Label(node);
 					break;
 			}
 		}
 
-		private void Declare(AstNode node)
+		private void Declaration(AstNode node, Func<string, Identifier> identifierBuilder)
 		{
 			var label = node.Value;
 			if (_identifiers.Any(i => i.ValueEquals(node.Value)))
 			{
 				throw new DuplicateDeclarationException(label);
 			}
-			_identifiers.Add(Variable(label));
+			_identifiers.Add(identifierBuilder(label));
 		}
 
 		private void Label(AstNode node)
@@ -57,5 +62,8 @@ namespace Quack.SemanticValidation
 
 		private static Identifier Variable(string label) 
 			=> new Identifier(label, IdentifierType.VARIABLE);
+
+		private static Identifier Function(string label)
+			=> new Identifier(label, IdentifierType.FUNCTION);
 	}
 }

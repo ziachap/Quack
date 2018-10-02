@@ -24,7 +24,7 @@ namespace Quack.Parser
 		public AstNodeType Type { get; }
 		public string Value { get; }
 		public List<AstNode> Children { get; set; }
-
+		
 		public override string ToString()
 		{
 			var type = Enum.GetName(typeof(AstNodeType), Type);
@@ -46,6 +46,10 @@ namespace Quack.Parser
 		LABEL,
 		FACTOR,
 		IF_ELSE,
-		WHILE
+		WHILE,
+		FUNC_DEF,
+		FUNC_CALL,
+		PARAM,
+		RETURN
 	}
 }

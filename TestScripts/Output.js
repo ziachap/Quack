@@ -1,3 +1,6 @@
+function doSomething(){
+  console.log(999);
+}
 var a;
 var b = 8;
 a = (2 + (b / 2)) - (1 * 3);
@@ -17,6 +20,7 @@ var c = 2;
 while (c < 5) {
   c = c + 1;
 }
+doSomething();
 console.log(a);
 console.log(b);
 console.log(c);

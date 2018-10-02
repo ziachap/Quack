@@ -56,10 +56,12 @@ namespace Quack.Parser
 			var nextToken = tokens.Peek();
 			switch (nextToken.Type)
 			{
+				case TokenType.FUNC_DECLARE:
+					return FuncDeclare(tokens);
 				case TokenType.DECLARE:
 					return Declare(tokens);
 				case TokenType.LABEL:
-					return Assign(tokens);
+					return Label(tokens);
 				case TokenType.PRINT:
 					return Print(tokens);
 				case TokenType.IF:
@@ -106,6 +108,23 @@ namespace Quack.Parser
 			return new AstNode(AstNodeType.WHILE, null, children);
 		}
 
+		private AstNode FuncDeclare(TokenQueue tokens)
+		{
+			tokens.Skip(TokenType.FUNC_DECLARE);
+
+			var label = tokens.Dequeue();
+
+			var funcNode = new AstNode(AstNodeType.FUNC_DEF, label.Value);
+
+			tokens.Skip(TokenType.OPEN_PARENTHESES);
+			tokens.Skip(TokenType.CLOSE_PARENTHESES);
+
+			var enclosedTokens = BracedStatements(tokens);
+			funcNode.Children.Add(enclosedTokens);
+			
+			return funcNode;
+		}
+
 		private AstNode Declare(TokenQueue tokens)
 		{
 			var declareNode = new AstNode(AstNodeType.DECLARE, tokens.ElementAt(1).Value);
@@ -123,6 +142,19 @@ namespace Quack.Parser
 			}
 			
 			return declareNode;
+		}
+
+		private AstNode Label(TokenQueue tokens)
+		{
+			return IsFunctionCall() ? FunctionCall(tokens) : Assign(tokens);
+			bool IsFunctionCall() => tokens.IsNextType(TokenType.OPEN_PARENTHESES, 1);
+		}
+
+		private AstNode FunctionCall(TokenQueue tokens)
+		{
+			var funcLabel = tokens.Dequeue().Value;
+			_bracketService.TakeEnclosedTokens(tokens, BracketSets.Parentheses);
+			return new AstNode(AstNodeType.FUNC_CALL, funcLabel);
 		}
 
 		private AstNode Assign(TokenQueue tokens)

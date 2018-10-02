@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace Quack
 {
 	public static class LanguageConstants
@@ -15,5 +10,6 @@ namespace Quack
 		public const string IF = "if";
 		public const string ELSE = "else";
 		public const string WHILE = "while";
+		public const string FUNCTION = "func";
 	}
 }

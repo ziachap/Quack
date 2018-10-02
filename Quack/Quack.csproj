@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Lexer\TokenDefinitions\FuncDeclareTokenDefinition.cs" />
     <Compile Include="Lexer\TokenDefinitions\WhileTokenDefinition.cs" />
     <Compile Include="Parser\Brackets\BracketService.cs" />
     <Compile Include="Parser\Brackets\BracketSets.cs" />

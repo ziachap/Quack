@@ -46,12 +46,29 @@ namespace Quack.Transpiler
 				case AstNodeType.ASSIGN:
 					return Assign(node) + StatementEnd();
 				case AstNodeType.IF_ELSE:
-					return IfElse(node) + "\n";
+					return IfElse(node) + BracedEnd();
 				case AstNodeType.WHILE:
-					return While(node) + "\n";
+					return While(node) + BracedEnd();
+				case AstNodeType.FUNC_DEF:
+					return FuncDef(node) + BracedEnd();
+				case AstNodeType.FUNC_CALL:
+					return FuncCall(node) + StatementEnd();
 				default:
 					throw new TranspilerException("AstNodeType not supported");
 			}
+		}
+
+		private string FuncDef(AstNode node)
+		{
+			var label = node.Value;
+			var statementsNode = node.Children.Single();
+			var statements = Indented(() => Statements(statementsNode));
+			return $"function {label}(){{\n{statements}{Indentation()}}}";
+		}
+
+		private string FuncCall(AstNode node)
+		{ 
+			return $"{node.Value}()";
 		}
 
 		private string Declare(AstNode node)
@@ -132,6 +149,7 @@ namespace Quack.Transpiler
 		}
 
 		private string StatementEnd() => ";\n";
+		private string BracedEnd() => "\n";
 
 		private string Indentation() => new string(' ', 2 * IndentationLevel);
 

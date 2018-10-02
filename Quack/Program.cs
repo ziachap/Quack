@@ -48,6 +48,7 @@ namespace Quack
 		private static void BindTokenDefinitions(IKernel kernel)
 		{
 			// keywords
+			kernel.Bind<ITokenDefinition>().To<FuncDeclareTokenDefinition>();
 			kernel.Bind<ITokenDefinition>().To<DeclareTokenDefinition>();
 			kernel.Bind<ITokenDefinition>().To<IfTokenDefinition>();
 			kernel.Bind<ITokenDefinition>().To<ElseTokenDefinition>();
