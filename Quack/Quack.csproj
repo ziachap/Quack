@@ -87,13 +87,14 @@
     <Compile Include="Parser\IParser.cs" />
     <Compile Include="Parser\ParseException.cs" />
     <Compile Include="Parser\Parser.cs" />
+    <Compile Include="SemanticValidation\SemanticAnalyzerResult.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SemanticValidation\Exceptions\DuplicateDeclarationException.cs" />
     <Compile Include="SemanticValidation\Identifier.cs" />
-    <Compile Include="SemanticValidation\ISemanticValidatorService.cs" />
+    <Compile Include="SemanticValidation\ISemanticAnalyzer.cs" />
     <Compile Include="SemanticValidation\Exceptions\LabelNotDeclaredException.cs" />
-    <Compile Include="SemanticValidation\SemanticValidatorService.cs" />
+    <Compile Include="SemanticValidation\SemanticAnalyzer.cs" />
     <Compile Include="Transpiler\ITranspiler.cs" />
     <Compile Include="Transpiler\JavascriptTranspiler.cs" />
     <Compile Include="Transpiler\TranspilerException.cs" />

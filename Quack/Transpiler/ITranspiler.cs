@@ -1,9 +1,9 @@
-﻿using Quack.Parser;
+﻿using Quack.SemanticValidation;
 
 namespace Quack.Transpiler
 {
 	public interface ITranspiler
 	{
-		string Transpile(AstNode rootNode);
+		string Transpile(SemanticAnalyzerResult rootNode);
 	}
 }

@@ -38,7 +38,7 @@ namespace Quack
 			kernel.Bind<IExpressionParser>().To<ExpressionParser>();
 			kernel.Bind<IBracketService>().To<BracketService>();
 
-			kernel.Bind<ISemanticValidatorService>().To<SemanticValidatorService>();
+			kernel.Bind<ISemanticAnalyzer>().To<SemanticAnalyzer>();
 			kernel.Bind<ITranspiler>().To<JavascriptTranspiler>();
 			BindTokenDefinitions(kernel);
 

@@ -1,24 +1,41 @@
 ﻿
+using Quack.Parser;
+
 namespace Quack.SemanticValidation
 {
-	public class Identifier
+	public interface IDefinition
 	{
-		public Identifier(string value, IdentifierType type)
+		string Value { get; }
+		bool ValueEquals(IDefinition other);
+		bool ValueEquals(string value);
+	}
+
+	public abstract class BaseDefinition : IDefinition
+	{
+		protected BaseDefinition(string value)
 		{
 			Value = value;
-			Type = type;
 		}
 
 		public string Value { get; }
-		private IdentifierType Type { get; }
-
-		public bool ValueEquals(Identifier other) => string.Equals(Value, other.Value);
+		public bool ValueEquals(IDefinition other) => string.Equals(Value, other.Value);
 		public bool ValueEquals(string value) => string.Equals(Value, value);
 	}
-	
-	public enum IdentifierType
+
+	public class VariableDefinition : BaseDefinition
 	{
-		VARIABLE,
-		FUNCTION
+		public VariableDefinition(string value) : base(value)
+		{
+		}
+	}
+
+	public class FunctionDefinition : BaseDefinition
+	{
+		public FunctionDefinition(string value, AstNode statements) : base(value)
+		{
+			Statements = statements;
+		}
+		
+		public AstNode Statements { get; }
 	}
 }

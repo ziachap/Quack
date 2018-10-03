@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Quack.Parser;
+using Quack.SemanticValidation;
 
 namespace Quack.Transpiler
 {
@@ -16,13 +18,30 @@ namespace Quack.Transpiler
 			IndentationLevel = 0;
 		}
 
-		public string Transpile(AstNode rootNode)
+		public string Transpile(SemanticAnalyzerResult analysedAst)
 		{
 			Console.WriteLine("--- Transpiler (JavaScript) ---");
 
-			_output.Append(Statements(rootNode));
+			_output.Append(FunctionDeclarations(analysedAst.FunctionDeclarations));
+			_output.Append(Statements(analysedAst.EntryNode));
 
 			return _output.ToString();
+		}
+
+		private string FunctionDeclarations(IEnumerable<IDefinition> definitions)
+		{
+			var functionOutputs = definitions
+				.OfType<FunctionDefinition>()
+				.Select(FuncDef)
+				.ToList();
+
+			return string.Join(BracedEnd(), functionOutputs) + BracedEnd();
+
+			string FuncDef(FunctionDefinition funcDef)
+			{
+				var statements = Indented(() => Statements(funcDef.Statements));
+				return $"function {funcDef.Value}(){{\n{statements}{Indentation()}}}";
+			} 
 		}
 
 		private string Statements(AstNode node)
@@ -50,20 +69,12 @@ namespace Quack.Transpiler
 				case AstNodeType.WHILE:
 					return While(node) + BracedEnd();
 				case AstNodeType.FUNC_DEF:
-					return FuncDef(node) + BracedEnd();
+					return string.Empty;
 				case AstNodeType.FUNC_CALL:
 					return FuncCall(node) + StatementEnd();
 				default:
 					throw new TranspilerException("AstNodeType not supported");
 			}
-		}
-
-		private string FuncDef(AstNode node)
-		{
-			var label = node.Value;
-			var statementsNode = node.Children.Single();
-			var statements = Indented(() => Statements(statementsNode));
-			return $"function {label}(){{\n{statements}{Indentation()}}}";
 		}
 
 		private string FuncCall(AstNode node)

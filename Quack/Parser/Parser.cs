@@ -119,9 +119,9 @@ namespace Quack.Parser
 			tokens.Skip(TokenType.OPEN_PARENTHESES);
 			tokens.Skip(TokenType.CLOSE_PARENTHESES);
 
-			var enclosedTokens = BracedStatements(tokens);
-			funcNode.Children.Add(enclosedTokens);
-			
+			var enclosedStatements = BracedStatements(tokens);
+			funcNode.Children.Add(enclosedStatements);
+
 			return funcNode;
 		}
 

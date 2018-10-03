@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Quack.Lexer;
-using Quack.Lexer.TokenDefinitions;
 
 namespace Quack.Parser
 {

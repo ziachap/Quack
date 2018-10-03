@@ -19,7 +19,7 @@ namespace Quack
 		private readonly ISourceSanitizer _sanitizer;
 		private readonly ILexer _lexer;
 		private readonly IParser _parser;
-		private readonly ISemanticValidatorService _semanticValidator;
+		private readonly ISemanticAnalyzer _semanticValidator;
 		private readonly ITranspiler _transpiler;
 		private readonly IFileWriter _writer;
 
@@ -27,7 +27,7 @@ namespace Quack
 			ISourceSanitizer sanitizer,
 			ILexer lexer,
 			IParser parser, 
-			ISemanticValidatorService semanticValidator,
+			ISemanticAnalyzer semanticValidator,
 			ITranspiler transpiler,
 			IFileWriter writer)
 		{
@@ -64,9 +64,9 @@ namespace Quack
 			var ast = _parser.Parse(tokens);
 			PrintAstTree(ast);
 
-			_semanticValidator.Validate(ast);
+			var analyzedAst = _semanticValidator.Analyze(ast);
 
-			var transpiledCode = _transpiler.Transpile(ast);
+			var transpiledCode = _transpiler.Transpile(analyzedAst);
 			Console.WriteLine(transpiledCode);
 
 			var outputPath = "C:/working.git/Quack/TestScripts";

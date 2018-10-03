@@ -1,0 +1,38 @@
+
+<Parent> (value)
+	<Child1>
+	<Child2> -comment
+	<Child3>?
+	...
+
+--------------------------
+
+DECLARE (label)
+	ASSIGN | LABEL
+
+ASSIGN 
+	LABEL
+	ARITH_OP | BOOL_OP | LABEL | NUMBER
+
+IF_ELSE
+	BOOL_OP
+	STATEMENTS -if branch
+	STATEMENTS? | IF_ELSE? -else/elif branch
+
+WHILE
+	BOOL_OP
+	STATEMENTS -while branch
+
+PRINT
+	ARITH_OP | BOOL_OP | LABEL | NUMBER
+
+FACTOR
+	ARITH_OP | BOOL_OP | LABEL | NUMBER
+
+ARITH_OP
+	LABEL | NUMBER
+	LABEL | NUMBER
+
+BOOL_OP
+	LABEL | NUMBER
+	LABEL | NUMBER
