@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Quack.Parser;
+using Quack.SemanticAnalysis;
 using Quack.SemanticValidation;
 
 namespace Quack.Transpiler
@@ -22,27 +23,31 @@ namespace Quack.Transpiler
 		{
 			Console.WriteLine("--- Transpiler (JavaScript) ---");
 
-			_output.Append(FunctionDeclarations(analysedAst.FunctionDeclarations));
+			// This is for declaring all functions at start of file
+			//_output.Append(FunctionDeclarations(analysedAst.FunctionDeclarations));
 			_output.Append(Statements(analysedAst.EntryNode));
 
 			return _output.ToString();
 		}
 
-		private string FunctionDeclarations(IEnumerable<IDefinition> definitions)
+		private string FunctionDeclarations(IEnumerable<IDeclaration> declarations)
 		{
-			var functionOutputs = definitions
-				.OfType<FunctionDefinition>()
+			var functionOutputs = declarations
+				.OfType<FunctionDeclaration>()
 				.Select(FuncDef)
 				.ToList();
 
 			return string.Join(BracedEnd(), functionOutputs) + BracedEnd();
 
-			string FuncDef(FunctionDefinition funcDef)
+			string FuncDef(FunctionDeclaration funcDef)
 			{
 				var statements = Indented(() => Statements(funcDef.Statements));
-				return $"function {funcDef.Value}(){{\n{statements}{Indentation()}}}";
+				var parameters = FunctionParameters(funcDef.Params.Select(d => d.Value));
+				return $"function {funcDef.Value}({parameters}){{\n{statements}{Indentation()}}}";
 			} 
 		}
+
+		private string FunctionParameters(IEnumerable<string> parameters) => string.Join(", ", parameters);
 
 		private string Statements(AstNode node)
 		{
@@ -69,17 +74,27 @@ namespace Quack.Transpiler
 				case AstNodeType.WHILE:
 					return While(node) + BracedEnd();
 				case AstNodeType.FUNC_DEF:
-					return string.Empty;
+					return FunctionDeclaration(node) + BracedEnd();
 				case AstNodeType.FUNC_CALL:
-					return FuncCall(node) + StatementEnd();
+					return FunctionCall(node) + StatementEnd();
 				default:
 					throw new TranspilerException("AstNodeType not supported");
 			}
 		}
+		
+		private string FunctionDeclaration(AstNode node)
+		{
+			var label = node.Value;
+			var statements = Indented(() => Statements(node.Children.Last()));
+			var parameters = FunctionParameters(node.Children.Take(node.Children.Count - 1).Select(d => d.Value));
 
-		private string FuncCall(AstNode node)
-		{ 
-			return $"{node.Value}()";
+			return $"function {label}({parameters}){{\n{statements}{Indentation()}}}";
+		}
+
+		private string FunctionCall(AstNode node)
+		{
+			var parameters = node.Children.Select(Expression);
+			return $"{node.Value}({string.Join(", ", parameters)})";
 		}
 
 		private string Declare(AstNode node)

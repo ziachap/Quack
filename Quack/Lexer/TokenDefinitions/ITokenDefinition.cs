@@ -8,7 +8,7 @@ namespace Quack.Lexer.TokenDefinitions
 
 	public enum TokenType
 	{
-		DECLARE,
+		VAR_DECLARE,
 		FUNC_DECLARE,
 		ASSIGN,
 		ARITHMETIC_OPERATOR,
@@ -23,6 +23,7 @@ namespace Quack.Lexer.TokenDefinitions
 		CLOSE_BRACES,
 		IF,
 		ELSE,
-		WHILE
+		WHILE,
+		PARAM_DELIMITER
 	}
 }

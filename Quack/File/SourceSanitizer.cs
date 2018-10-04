@@ -13,6 +13,7 @@ namespace Quack.File
 			output = PadParentheses(output);
 			output = PadBraces(output);
 			output = PadStatementEnds(output);
+			output = PadCommas(output);
 			output = RemoveNewLines(output);
 			output = ReduceWhitespace(output);
 			output = TrimWhitespace(output);
@@ -52,6 +53,11 @@ namespace Quack.File
 		private static string PadStatementEnds(string input)
 		{
 			return Regex.Replace(input, @";", " ; ");
+		}
+
+		private static string PadCommas(string input)
+		{
+			return Regex.Replace(input, @",", " , ");
 		}
 
 		private static string RemoveNewLines(string input)

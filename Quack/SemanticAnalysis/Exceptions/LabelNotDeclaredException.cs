@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Quack.SemanticValidation.Exceptions
+namespace Quack.SemanticAnalysis.Exceptions
 {
 	public class LabelNotDeclaredException : Exception
 	{

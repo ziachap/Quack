@@ -1,5 +1,16 @@
-func doSomething() {
-	print 999;
+func doSomething(declare apple, declare nothing) {
+
+	func ert(declare orange, declare hhh) {
+		print hhh + 1;
+	}
+	
+	ert(2, 4);
+
+	print apple + 1;
+}
+
+func addThings(declare apple, declare what) {
+	print apple + what;
 }
 
 declare a;
@@ -23,7 +34,7 @@ while(c < 5) {
 	c = c + 1;
 }
 
-doSomething();
+doSomething(4, a + 1);
 
 print a;
 print b;

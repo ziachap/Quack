@@ -1,9 +1,8 @@
 using System;
 using Quack.File;
 using Quack.Lexer;
-using Quack.Lexer.TokenDefinitions;
 using Quack.Parser;
-using Quack.SemanticValidation;
+using Quack.SemanticAnalysis;
 using Quack.Transpiler;
 
 namespace Quack

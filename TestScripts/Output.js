@@ -1,5 +1,12 @@
-function doSomething(){
-  console.log(999);
+function doSomething(apple, nothing){
+  function ert(orange, hhh){
+    console.log(hhh + 1);
+  }
+  ert(2, 4);
+  console.log(apple + 1);
+}
+function addThings(apple, what){
+  console.log(apple + what);
 }
 var a;
 var b = 8;
@@ -20,7 +27,7 @@ var c = 2;
 while (c < 5) {
   c = c + 1;
 }
-doSomething();
+doSomething(4, a + 1);
 console.log(a);
 console.log(b);
 console.log(c);

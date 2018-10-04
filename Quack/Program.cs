@@ -6,6 +6,7 @@ using Quack.Lexer.TokenDefinitions;
 using Quack.Lexer.TokenDefinitions.BracesAndParentheses;
 using Quack.Parser;
 using Quack.Parser.Brackets;
+using Quack.SemanticAnalysis;
 using Quack.SemanticValidation;
 using Quack.Transpiler;
 
@@ -59,6 +60,7 @@ namespace Quack
 			kernel.Bind<ITokenDefinition>().To<AssignTokenDefinition>();
 			kernel.Bind<ITokenDefinition>().To<ArithmeticOperatorTokenDefinition>();
 			kernel.Bind<ITokenDefinition>().To<BooleanOperatorTokenDefinition>();
+			kernel.Bind<ITokenDefinition>().To<ParamDelimeterTokenDefinition>();
 			kernel.Bind<ITokenDefinition>().To<StatementEndTokenDefinition>();
 
 			// brackets

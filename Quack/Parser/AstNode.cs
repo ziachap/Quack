@@ -47,7 +47,7 @@ namespace Quack.Parser
 		WHILE,
 		FUNC_DEF,
 		FUNC_CALL,
-		PARAM,
-		RETURN
+		FUNC_PARAM,
+		FUNC_RETURN
 	}
 }

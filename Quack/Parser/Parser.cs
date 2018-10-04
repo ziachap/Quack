@@ -58,8 +58,8 @@ namespace Quack.Parser
 			{
 				case TokenType.FUNC_DECLARE:
 					return FuncDeclare(tokens);
-				case TokenType.DECLARE:
-					return Declare(tokens);
+				case TokenType.VAR_DECLARE:
+					return VarDeclare(tokens);
 				case TokenType.LABEL:
 					return Label(tokens);
 				case TokenType.PRINT:
@@ -116,8 +116,21 @@ namespace Quack.Parser
 
 			var funcNode = new AstNode(AstNodeType.FUNC_DEF, label.Value);
 
-			tokens.Skip(TokenType.OPEN_PARENTHESES);
-			tokens.Skip(TokenType.CLOSE_PARENTHESES);
+
+			var paramTokens = _bracketService.TakeEnclosedTokens(tokens, BracketSets.Parentheses);
+			while (paramTokens.Any())
+			{
+				if (paramTokens.IsNextType(TokenType.VAR_DECLARE))
+				{
+					var declare = VarDeclare(paramTokens, false);
+					funcNode.Children.Add(new AstNode(AstNodeType.FUNC_PARAM, declare.Value));
+					if (paramTokens.IsNextType(TokenType.PARAM_DELIMITER))
+					{
+						paramTokens.Skip(TokenType.PARAM_DELIMITER);
+					}
+				}
+				else throw new ParseException($"Expected variable declaration for params but got {paramTokens.Peek()}");
+			}
 
 			var enclosedStatements = BracedStatements(tokens);
 			funcNode.Children.Add(enclosedStatements);
@@ -125,13 +138,13 @@ namespace Quack.Parser
 			return funcNode;
 		}
 
-		private AstNode Declare(TokenQueue tokens)
+		private AstNode VarDeclare(TokenQueue tokens, bool allowInLineAssignment = true)
 		{
 			var declareNode = new AstNode(AstNodeType.DECLARE, tokens.ElementAt(1).Value);
 			
-			tokens.Skip(TokenType.DECLARE);
+			tokens.Skip(TokenType.VAR_DECLARE);
 
-			if (tokens.ElementAt(1).Type == TokenType.ASSIGN)
+			if (allowInLineAssignment && tokens.IsNextType(TokenType.ASSIGN, 1))
 			{
 				declareNode.Children.Add(Assign(tokens));
 			}
@@ -153,8 +166,21 @@ namespace Quack.Parser
 		private AstNode FunctionCall(TokenQueue tokens)
 		{
 			var funcLabel = tokens.Dequeue().Value;
-			_bracketService.TakeEnclosedTokens(tokens, BracketSets.Parentheses);
-			return new AstNode(AstNodeType.FUNC_CALL, funcLabel);
+			var funcCallNode = new AstNode(AstNodeType.FUNC_CALL, funcLabel);
+
+			var paramTokens = _bracketService.TakeEnclosedTokens(tokens, BracketSets.Parentheses);
+
+			while (paramTokens.Any())
+			{
+				var nextExpression = _expressionParser.ParseExpression(paramTokens);
+				funcCallNode.Children.Add(nextExpression);
+				if (paramTokens.IsNextType(TokenType.PARAM_DELIMITER))
+				{
+					paramTokens.Skip(TokenType.PARAM_DELIMITER);
+				}
+			}
+
+			return funcCallNode;
 		}
 
 		private AstNode Assign(TokenQueue tokens)

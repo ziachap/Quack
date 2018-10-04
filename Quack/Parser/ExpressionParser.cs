@@ -16,7 +16,7 @@ namespace Quack.Parser
 			_bracketService = bracketService;
 		}
 
-		public  AstNode ParseExpression(TokenQueue tokens)
+		public AstNode ParseExpression(TokenQueue tokens)
 		{
 			if (tokens.IsNextType(TokenType.OPEN_PARENTHESES))
 			{
