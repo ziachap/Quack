@@ -15,6 +15,7 @@ namespace Quack.Tests
 		
 		private TokenQueue ValidTokens(TokenType openType, TokenType closeType) => new TokenQueue(new[]
 		{
+			new Token(openType),
 			new Token(TokenType.NUMBER, "num1"),
 			new Token(TokenType.ARITHMETIC_OPERATOR, "op1"),
 			new Token(openType),
@@ -49,7 +50,7 @@ namespace Quack.Tests
 
 		[TestCase(TokenType.OPEN_PARENTHESES, TokenType.CLOSE_PARENTHESES)]
 		[TestCase(TokenType.OPEN_BRACES, TokenType.CLOSE_BRACES)]
-		public void TakeTokensUntilClose_Dequeues_Tokens_Up_To_Matching_Close_Token(TokenType openType, TokenType closeType)
+		public void TakeTokensUntilClose_Dequeues_Input_Tokens_Up_To_Matching_Close_Token(TokenType openType, TokenType closeType)
 		{
 			var bracketSet = BracketSet(openType, closeType);
 			var tokens = ValidTokens(openType, closeType);
