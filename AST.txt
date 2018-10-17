@@ -7,7 +7,15 @@
 
 --------------------------
 
-DECLARE (label)
+FUNC_CALL
+	(ARITH_OP | BOOL_OP | LABEL | NUMBER)?
+
+FUNC_DECLARE
+	FUNC_PARAM?
+	...
+	STATEMENTS
+
+VAR_DECLARE
 	ASSIGN | LABEL
 
 ASSIGN 
