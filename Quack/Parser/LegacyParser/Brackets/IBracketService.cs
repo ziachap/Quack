@@ -1,6 +1,6 @@
 ﻿using Quack.Lexer;
 
-namespace Quack.Parser.Brackets
+namespace Quack.Parser.LegacyParser.Brackets
 {
 	public interface IBracketService
 	{

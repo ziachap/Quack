@@ -3,7 +3,7 @@ using System.Linq;
 using Quack.Lexer;
 using Quack.Lexer.TokenDefinitions;
 
-namespace Quack.Parser.Brackets
+namespace Quack.Parser.LegacyParser.Brackets
 {
 	public class BracketService : IBracketService
 	{

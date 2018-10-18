@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Quack.Lexer;
 using Quack.Lexer.TokenDefinitions;
-using Quack.Parser.Brackets;
+using Quack.Parser.LegacyParser.Brackets;
 
-namespace Quack.Parser
+namespace Quack.Parser.LegacyParser
 {
 	public class LegacyParser : IParser
 	{

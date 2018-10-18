@@ -2,10 +2,11 @@ func printSum(declare a, declare b) {
 	print a + b;
 }
 
+
 declare apple = 3;
 declare orange;
 
-while (apple < 6) {
+while (apple + 1 < 6 - 1) {
 	apple = apple + 1;
 }
 

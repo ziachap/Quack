@@ -5,7 +5,8 @@ using Quack.Lexer;
 using Quack.Lexer.TokenDefinitions;
 using Quack.Lexer.TokenDefinitions.BracesAndParentheses;
 using Quack.Parser;
-using Quack.Parser.Brackets;
+using Quack.Parser.LegacyParser;
+using Quack.Parser.LegacyParser.Brackets;
 using Quack.SemanticAnalysis;
 using Quack.SemanticValidation;
 using Quack.Transpiler;
@@ -36,8 +37,9 @@ namespace Quack
 			kernel.Bind<ILexer>().To<Lexer.Lexer>();
 
 			kernel.Bind<IParser>().To<FunctionalParser>();
-			kernel.Bind<IExpressionParser>().To<ExpressionParser>();
-			kernel.Bind<IBracketService>().To<BracketService>();
+			// LEGACY
+			//kernel.Bind<IExpressionParser>().To<ExpressionParser>();
+			//kernel.Bind<IBracketService>().To<BracketService>();
 
 			kernel.Bind<ISemanticAnalyzer>().To<SemanticAnalyzer>();
 			kernel.Bind<ITranspiler>().To<JavascriptTranspiler>();

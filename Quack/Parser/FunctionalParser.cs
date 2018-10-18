@@ -12,7 +12,16 @@ namespace Quack.Parser
 		{
 			Console.WriteLine("--- PARSER ---");
 
-			var result = Parser.Parse(ListModule.OfSeq(tokens.Select(AsParserToken)));
+			Types.AstNode result;
+			try
+			{
+				result = Parser.Parse(ListModule.OfSeq(tokens.Select(AsParserToken)));
+
+			}
+			catch(Exception ex)
+			{
+				throw new ParseException("There was a problem parsing the source file", ex);
+			}
 
 			return AstNode(result);
 		}

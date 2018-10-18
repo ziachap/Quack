@@ -1,6 +1,6 @@
 ﻿using Quack.Lexer;
 
-namespace Quack.Parser
+namespace Quack.Parser.LegacyParser
 {
 	public interface IExpressionParser
 	{

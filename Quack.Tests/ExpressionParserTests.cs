@@ -3,7 +3,8 @@ using NUnit.Framework;
 using Quack.Lexer;
 using Quack.Lexer.TokenDefinitions;
 using Quack.Parser;
-using Quack.Parser.Brackets;
+using Quack.Parser.LegacyParser;
+using Quack.Parser.LegacyParser.Brackets;
 
 namespace Quack.Tests
 {

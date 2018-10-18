@@ -1,10 +1,9 @@
 function printSum(a, b){
   console.log(a + b);
 }
-var a;
 var apple = 3;
 var orange;
-while (apple < 6) {
+while (apple + 1 < 6 - 1) {
   apple = apple + 1;
 }
 if (apple > 6) {
