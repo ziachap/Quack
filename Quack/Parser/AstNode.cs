@@ -5,22 +5,34 @@ namespace Quack.Parser
 {
 	public class AstNode
 	{
-		public AstNode(AstNodeType type, string value = null)
+		public AstNode(AstNodeType type, string value = null, string typeIdentifier = null)
 		{
 			Type = type;
+			TypeIdentifier = typeIdentifier;
 			Value = value;
 			Children = new List<AstNode>();
 		}
 
+		public AstNode(AstNodeType type, string value, string typeIdentifier, List<AstNode> children)
+		{
+			Type = type;
+			Value = value;
+			Children = children;
+			TypeIdentifier = typeIdentifier;
+		}
+
+		// Backward compatibility
 		public AstNode(AstNodeType type, string value, List<AstNode> children)
 		{
 			Type = type;
 			Value = value;
 			Children = children;
+			TypeIdentifier = null;
 		}
 
 		public AstNodeType Type { get; }
 		public string Value { get; }
+		public string TypeIdentifier { get; }
 		public List<AstNode> Children { get; set; }
 		
 		public override string ToString()
@@ -49,7 +61,7 @@ namespace Quack.Parser
 		WHILE,
 		FUNC_DEF,
 		FUNC_INVOKE,
-		FUNC_PARAM,
+		FUNC_PARAM, // LEGACY
 		FUNC_RETURN
 	}
 }

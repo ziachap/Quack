@@ -98,6 +98,7 @@
     <Compile Include="Parser\ParseException.cs" />
     <Compile Include="Parser\LegacyParser\LegacyParser.cs" />
     <Compile Include="SemanticAnalysis\DeclarationStore.cs" />
+    <Compile Include="SemanticAnalysis\Exceptions\InvalidAssignmentTypeException.cs" />
     <Compile Include="SemanticAnalysis\Exceptions\InvalidFunctionCallException.cs" />
     <Compile Include="SemanticAnalysis\IDeclaration.cs" />
     <Compile Include="SemanticAnalysis\SemanticAnalyzerResult.cs" />

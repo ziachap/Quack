@@ -58,6 +58,10 @@ namespace Quack
 			kernel.Bind<ITokenDefinition>().To<WhileTokenDefinition>();
 			kernel.Bind<ITokenDefinition>().To<PrintTokenDefinition>();
 
+			// value type keywords
+			kernel.Bind<ITokenDefinition>().To<IntTokenDefinition>();
+			kernel.Bind<ITokenDefinition>().To<BoolTokenDefinition>();
+
 			// symbols
 			kernel.Bind<ITokenDefinition>().To<AssignTokenDefinition>();
 			kernel.Bind<ITokenDefinition>().To<ArithmeticOperatorTokenDefinition>();

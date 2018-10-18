@@ -63,6 +63,9 @@ namespace Quack.SemanticAnalysis
 					VerifyDeclarationExists(node);
 					VerifyHasRequiredParameters(node);
 					break;
+				case AstNodeType.ASSIGN:
+					VerifyValidTypeforAssignment(node);
+					break;
 			}
 		}
 
@@ -90,8 +93,8 @@ namespace Quack.SemanticAnalysis
 			switch (node.Type)
 			{
 				case AstNodeType.DECLARE:
-				case AstNodeType.FUNC_PARAM:
-					return new VariableDeclaration(node.Value);
+				//case AstNodeType.FUNC_PARAM:
+					return new VariableDeclaration(node.Value, node.TypeIdentifier);
 				case AstNodeType.FUNC_DEF:
 					return new FunctionDeclaration(node.Value, node.Children.First())
 					{
@@ -108,6 +111,44 @@ namespace Quack.SemanticAnalysis
 			if (function.Params.Count != functionCallNode.Children.Count)
 			{
 				throw new InvalidFunctionCallException(function);
+			}
+		}
+
+		private void VerifyValidTypeforAssignment(AstNode node)
+		{
+			var identifier = node.Children.First();
+			VerifyDeclarationExists(identifier);
+			var declaration = (VariableDeclaration)_declarations.FindDeclaration(identifier.Value);
+
+			var expr = node.Children.ElementAt(1);
+			var exprTypeIdentifier = ExpressionType(expr);
+			if (exprTypeIdentifier != declaration.TypeIdentifier && declaration.TypeIdentifier != "any")
+			{
+				throw new InvalidAssignmentTypeException(declaration, exprTypeIdentifier);
+			}
+		}
+
+		private string LookupIdentifierType(AstNode identifier)
+		{
+			VerifyDeclarationExists(identifier);
+			var declaration = (VariableDeclaration)_declarations.FindDeclaration(identifier.Value);
+			return declaration.TypeIdentifier;
+		}
+
+		private string ExpressionType(AstNode expr)
+		{
+			switch (expr.Type)
+			{
+				case AstNodeType.ARITHMETIC_OPERATOR:
+				case AstNodeType.BOOLEAN_OPERATOR:
+				case AstNodeType.NUMBER:
+					return expr.TypeIdentifier;
+				case AstNodeType.FACTOR:
+					return ExpressionType(expr.Children.Single());
+				case AstNodeType.LABEL:
+					return LookupIdentifierType(expr);
+				default:
+					throw new Exception("Unexpected AstNodeType in expression");
 			}
 		}
 	}

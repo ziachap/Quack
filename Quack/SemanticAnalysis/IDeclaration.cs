@@ -25,9 +25,12 @@ namespace Quack.SemanticAnalysis
 
 	public class VariableDeclaration : BaseDeclaration
 	{
-		public VariableDeclaration(string value) : base(value)
+		public VariableDeclaration(string value, string typeIdentifier) : base(value)
 		{
+			TypeIdentifier = typeIdentifier;
 		}
+
+		public string TypeIdentifier { get; }
 	}
 
 	public class FunctionDeclaration : BaseDeclaration

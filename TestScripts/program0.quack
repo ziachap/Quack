@@ -1,17 +1,18 @@
-func printSum(declare a, declare b) {
+func printSum(any a, int b) {
 	print a + b;
 }
 
 
-declare apple = 3;
-declare orange;
+int apple = 3;
+any orange;
+bool testBool;
 
 while (apple + 1 < 6 - 1) {
 	apple = apple + 1;
 }
 
 if (apple > 6) {
-	orange = apple;
+	orange = 5;
 }
 else {
 	orange = 2;

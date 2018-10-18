@@ -4,6 +4,13 @@ module public Parser =
     open Atoms
     open Expressions
 
+    let (|TypeIdentifier|_|) (token:Token) =
+        match token with
+        | INT node | BOOL node -> Some(TypeIdentifierNode node)
+        | VAR_DECLARE -> Some(TypeIdentifierNode(token))
+        | Identifier node -> Some(node)
+        | _ -> None
+
     (* Statements *)  
     let (|AssignStatement|_|) (stream:List<Token>) =
         match stream with
@@ -12,8 +19,8 @@ module public Parser =
 
     let (|DeclareStatement|_|) (stream:List<Token>) =
         match stream with
-        | VAR_DECLARE :: AssignStatement(node, tail) -> Some(DeclareNode(node), tail)
-        | VAR_DECLARE :: Identifier(node) :: tail -> Some(DeclareNode(node), tail)
+        | TypeIdentifier typeNode :: AssignStatement(node, tail) -> Some(DeclareNode(node, typeNode), tail)
+        | TypeIdentifier typeNode :: Identifier(node) :: tail -> Some(DeclareNode(node, typeNode), tail)
         | _ -> None
 
     let (|PrintStatement|_|) (stream:List<Token>) =

@@ -86,8 +86,10 @@ namespace Quack
 		private string AstNodeText(AstNode node)
 		{
 			var type = Enum.GetName(typeof(AstNodeType), node.Type);
+			var typeIdentifier = !string.IsNullOrEmpty(node.TypeIdentifier)
+				? $" <{node.TypeIdentifier}>" : string.Empty;
 			var valueString = node.Value != null ? " : " + node.Value : string.Empty;
-			return $"[{type}{valueString}]";
+			return $"[{type}{valueString}]{typeIdentifier}";
 		}
 	}
 }

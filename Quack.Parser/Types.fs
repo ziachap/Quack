@@ -11,5 +11,6 @@ module Types =
         {
             Type:string
             Value:string
+            TypeIdentifier: string
             Children:List<AstNode>
         }

@@ -16,7 +16,6 @@ namespace Quack.Parser
 			try
 			{
 				result = Parser.Parse(ListModule.OfSeq(tokens.Select(AsParserToken)));
-
 			}
 			catch(Exception ex)
 			{
@@ -32,7 +31,7 @@ namespace Quack.Parser
 		private string TokenType(Enum type) => Enum.GetName(typeof(TokenType), type);
 
 		private AstNode AstNode(Types.AstNode node)
-			=> new AstNode(ParseAstNodeType(node.Type), node.Value, node.Children.Select(AstNode).ToList());
+			=> new AstNode(ParseAstNodeType(node.Type), node.Value, node.TypeIdentifier, node.Children.Select(AstNode).ToList());
 
 		private AstNodeType ParseAstNodeType(string type) => (AstNodeType)Enum.Parse(typeof(AstNodeType), type);
 	}
