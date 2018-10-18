@@ -7,12 +7,12 @@ using Quack.Parser.Brackets;
 
 namespace Quack.Parser
 {
-	public class Parser : IParser
+	public class LegacyParser : IParser
 	{
 		private readonly IExpressionParser _expressionParser;
 		private readonly IBracketService _bracketService;
 
-		public Parser(IExpressionParser expressionParser, IBracketService bracketService)
+		public LegacyParser(IExpressionParser expressionParser, IBracketService bracketService)
 		{
 			_expressionParser = expressionParser;
 			_bracketService = bracketService;
@@ -166,7 +166,7 @@ namespace Quack.Parser
 		private AstNode FunctionCall(TokenQueue tokens)
 		{
 			var funcLabel = tokens.Dequeue().Value;
-			var funcCallNode = new AstNode(AstNodeType.FUNC_CALL, funcLabel);
+			var funcCallNode = new AstNode(AstNodeType.FUNC_INVOKE, funcLabel);
 
 			var paramTokens = _bracketService.TakeEnclosedTokens(tokens, BracketSets.Parentheses);
 

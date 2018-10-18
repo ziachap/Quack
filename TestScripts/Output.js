@@ -1,6 +1,7 @@
 function printSum(a, b){
   console.log(a + b);
 }
+var a;
 var apple = 3;
 var orange;
 while (apple < 6) {

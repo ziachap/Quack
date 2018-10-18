@@ -33,7 +33,9 @@ namespace Quack.Parser
 
 	public enum AstNodeType
 	{
+		NO_OP,
 		STATEMENTS,
+		STATEMENT,
 		DECLARE,
 		ASSIGN,
 		ARITHMETIC_OPERATOR,
@@ -46,7 +48,7 @@ namespace Quack.Parser
 		IF_ELSE,
 		WHILE,
 		FUNC_DEF,
-		FUNC_CALL,
+		FUNC_INVOKE,
 		FUNC_PARAM,
 		FUNC_RETURN
 	}

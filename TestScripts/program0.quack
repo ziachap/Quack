@@ -1,4 +1,3 @@
-
 func printSum(declare a, declare b) {
 	print a + b;
 }

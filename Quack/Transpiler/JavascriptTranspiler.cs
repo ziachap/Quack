@@ -51,18 +51,18 @@ namespace Quack.Transpiler
 
 		private string Statements(AstNode node)
 		{
-			var statements = string.Empty;
-			foreach (var childNode in node.Children)
-			{
-				statements += Indentation() + Statement(childNode);
-			}
-			return statements;
+			if (node.Type == AstNodeType.NO_OP) return string.Empty;
+			var thisStatement = Indentation() + Statement(node.Children.First());
+			var nextStatement = node.Children.Count > 1 ? Indentation() + Statement(node.Children.ElementAt(1)) : string.Empty;
+			return thisStatement + nextStatement;
 		}
 
 		private string Statement(AstNode node)
 		{
 			switch (node.Type)
 			{
+				case AstNodeType.STATEMENT:
+					return Statements(node);
 				case AstNodeType.DECLARE:
 					return Declare(node) + StatementEnd();
 				case AstNodeType.PRINT:
@@ -75,7 +75,7 @@ namespace Quack.Transpiler
 					return While(node) + BracedEnd();
 				case AstNodeType.FUNC_DEF:
 					return FunctionDeclaration(node) + BracedEnd();
-				case AstNodeType.FUNC_CALL:
+				case AstNodeType.FUNC_INVOKE:
 					return FunctionCall(node) + StatementEnd();
 				default:
 					throw new TranspilerException("AstNodeType not supported");
@@ -85,8 +85,8 @@ namespace Quack.Transpiler
 		private string FunctionDeclaration(AstNode node)
 		{
 			var label = node.Value;
-			var statements = Indented(() => Statements(node.Children.Last()));
-			var parameters = FunctionParameters(node.Children.Take(node.Children.Count - 1).Select(d => d.Value));
+			var statements = Indented(() => Statements(node.Children.First()));
+			var parameters = FunctionParameters(node.Children.Skip(1).Select(d => d.Value));
 
 			return $"function {label}({parameters}){{\n{statements}{Indentation()}}}";
 		}

@@ -35,7 +35,7 @@ namespace Quack
 			kernel.Bind<ISourceSanitizer>().To<SourceSanitizer>();
 			kernel.Bind<ILexer>().To<Lexer.Lexer>();
 
-			kernel.Bind<IParser>().To<Parser.Parser>();
+			kernel.Bind<IParser>().To<FunctionalParser>();
 			kernel.Bind<IExpressionParser>().To<ExpressionParser>();
 			kernel.Bind<IBracketService>().To<BracketService>();
 

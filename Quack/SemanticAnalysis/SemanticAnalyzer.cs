@@ -29,11 +29,19 @@ namespace Quack.SemanticAnalysis
 		{
 			AnalyzeNode(node);
 
-			foreach (var child in node.Children)
+			if (node.Type == AstNodeType.FUNC_DEF)
 			{
-				DoAnalyze(child);
+				// Ignore parameter children
+				DoAnalyze(node.Children.First());
 			}
-			
+			else
+			{
+				foreach (var child in node.Children)
+				{
+					DoAnalyze(child);
+				}
+			}
+
 			if (node.Type == AstNodeType.FUNC_DEF)
 			{
 				_declarations.PopContext();
@@ -51,7 +59,7 @@ namespace Quack.SemanticAnalysis
 				case AstNodeType.LABEL:
 					VerifyDeclarationExists(node);
 					break;
-				case AstNodeType.FUNC_CALL:
+				case AstNodeType.FUNC_INVOKE:
 					VerifyDeclarationExists(node);
 					VerifyHasRequiredParameters(node);
 					break;
@@ -85,9 +93,9 @@ namespace Quack.SemanticAnalysis
 				case AstNodeType.FUNC_PARAM:
 					return new VariableDeclaration(node.Value);
 				case AstNodeType.FUNC_DEF:
-					return new FunctionDeclaration(node.Value, node.Children.Last())
+					return new FunctionDeclaration(node.Value, node.Children.First())
 					{
-						Params = new HashSet<IDeclaration>(node.Children.Take(node.Children.Count - 1).Select(MakeDefinition))
+						Params = new HashSet<IDeclaration>(node.Children.Skip(1).Select(MakeDefinition))
 					};
 			}
 
