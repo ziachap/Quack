@@ -16,16 +16,11 @@ namespace Quack.SemanticAnalysis
 		public void AddToCurrentContext(IDeclaration declaration)
 		{
 			_contexts.Peek().Declarations.Add(declaration);
-
-			if (declaration is FunctionDeclaration function)
-			{
-				PushContext(function);
-			}
 		}
 
-		public void PushContext(FunctionDeclaration function)
+		public void PushContext(string name = null)
 		{
-			var context = new DeclarationContext(function.Value, new HashSet<IDeclaration>(function.Params));
+			var context = new DeclarationContext(name, new HashSet<IDeclaration>());
 			PushContext(context);
 		}
 
@@ -74,6 +69,12 @@ namespace Quack.SemanticAnalysis
 
 		public string Name { get; }
 		public HashSet<IDeclaration> Declarations { get; }
+
+		public override string ToString()
+		{
+			return (!string.IsNullOrEmpty(Name) ? Name : "null") +
+			       $" -> [{string.Join(", ", Declarations.Select(d => d.GetType().Name + " " + d.Value))}]";
+		}
 	}
 
 }

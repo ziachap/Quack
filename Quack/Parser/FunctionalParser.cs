@@ -30,8 +30,13 @@ namespace Quack.Parser
 
 		private string TokenType(Enum type) => Enum.GetName(typeof(TokenType), type);
 
-		private AstNode AstNode(Types.AstNode node)
-			=> new AstNode(ParseAstNodeType(node.Type), node.Value, node.TypeIdentifier, node.Children.Select(AstNode).ToList());
+		private AstNode AstNode(Types.AstNode node, AstNode parent = null)
+		{
+			var astNode = new AstNode(ParseAstNodeType(node.Type), node.Value, node.TypeIdentifier);
+			astNode.Children = node.Children.Select(n => AstNode(n, astNode)).ToList();
+			astNode.Parent = parent;
+			return astNode;
+		}
 
 		private AstNodeType ParseAstNodeType(string type) => (AstNodeType)Enum.Parse(typeof(AstNodeType), type);
 	}

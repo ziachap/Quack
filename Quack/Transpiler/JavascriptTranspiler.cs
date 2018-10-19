@@ -51,17 +51,14 @@ namespace Quack.Transpiler
 
 		private string Statements(AstNode node)
 		{
-			if (node.Type == AstNodeType.NO_OP) return string.Empty;
-			var thisStatement = Indentation() + Statement(node.Children.First());
-			var nextStatement = node.Children.Count > 1 ? Indentation() + Statement(node.Children.ElementAt(1)) : string.Empty;
-			return thisStatement + nextStatement;
+			return string.Join("", node.Children.Select(st => Indentation() + Statement(st)));
 		}
 
 		private string Statement(AstNode node)
 		{
 			switch (node.Type)
 			{
-				case AstNodeType.STATEMENT:
+				case AstNodeType.STATEMENT_BLOCK:
 					return Statements(node);
 				case AstNodeType.DECLARE:
 					return Declare(node) + StatementEnd();

@@ -31,7 +31,7 @@ namespace Quack.Parser.LegacyParser
 		
 		private AstNode Statements(TokenQueue tokens)
 		{
-			var node = new AstNode(AstNodeType.STATEMENTS);
+			var node = new AstNode(AstNodeType.STATEMENT_BLOCK);
 
 			while (tokens.Any())
 			{

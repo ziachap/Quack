@@ -42,7 +42,7 @@ namespace Quack.SemanticAnalysis
 				}
 			}
 
-			if (node.Type == AstNodeType.FUNC_DEF)
+			if (node.Type == AstNodeType.STATEMENT_BLOCK)
 			{
 				_declarations.PopContext();
 			}
@@ -52,6 +52,9 @@ namespace Quack.SemanticAnalysis
 		{
 			switch (node.Type)
 			{
+				case AstNodeType.STATEMENT_BLOCK:
+					NewContext(node);
+					break;
 				case AstNodeType.DECLARE:
 				case AstNodeType.FUNC_DEF:
 					Declaration(node);
@@ -69,6 +72,21 @@ namespace Quack.SemanticAnalysis
 				case AstNodeType.IF_ELSE:
 					VerifyBranchExpressionIsBoolean(node);
 					break;
+			}
+		}
+
+		private void NewContext(AstNode statementBlockNode)
+		{
+			var parent = statementBlockNode.Parent;
+			if (parent != null && parent.Type == AstNodeType.FUNC_DEF)
+			{
+				// if this is a statement block for a function, add the function's params to the new context
+				var parameters = parent.Children.Skip(1).Select(MakeDefinition);
+				_declarations.PushContext(new DeclarationContext("FUNC_" + parent.Value, new HashSet<IDeclaration>(parameters)));
+			}
+			else
+			{
+				_declarations.PushContext();
 			}
 		}
 

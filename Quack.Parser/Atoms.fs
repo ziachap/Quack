@@ -64,16 +64,10 @@ module Atoms =
 
     let AssignNode (identifier:AstNode, exp:AstNode) : AstNode =
         { Type = "ASSIGN"; Value = identifier.Value; TypeIdentifier = null; Children = [identifier; exp] }
-
-    let StatementNode (statement:AstNode, next:AstNode) : AstNode =
-        { Type = "STATEMENT"; Value = null; TypeIdentifier = null; Children = [statement; next] }
         
-    let FinalStatementNode (statement:AstNode) : AstNode =
-        { Type = "STATEMENT"; Value = null; TypeIdentifier = null; Children = [statement] }
-    
-    let NoOpNode : AstNode =
-        { Type = "NO_OP"; Value = null; TypeIdentifier = null; Children = [] }
-        
+    let StatementBlockNode (statements:List<AstNode>) : AstNode =
+        { Type = "STATEMENT_BLOCK"; Value = null; TypeIdentifier = null; Children = statements }
+                    
     let IfNode (exp:AstNode, ifStatements:AstNode) : AstNode =
         { Type = "IF_ELSE"; Value = null; TypeIdentifier = null; Children = [exp; ifStatements] }
         

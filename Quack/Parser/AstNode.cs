@@ -34,6 +34,7 @@ namespace Quack.Parser
 		public string Value { get; }
 		public string TypeIdentifier { get; }
 		public List<AstNode> Children { get; set; }
+		public AstNode Parent { get; set; }
 		
 		public override string ToString()
 		{
@@ -46,7 +47,7 @@ namespace Quack.Parser
 	public enum AstNodeType
 	{
 		NO_OP,
-		STATEMENTS,
+		STATEMENT_BLOCK,
 		STATEMENT,
 		DECLARE,
 		ASSIGN,

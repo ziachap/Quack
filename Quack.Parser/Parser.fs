@@ -28,15 +28,18 @@ module public rec Parser =
         | PRINT :: (Expression(exp, tail)) -> Some(PrintNode(exp), tail)
         | _ -> None
        
-
+    let rec (|StatementBlock|_|) (stream:List<Token>)  =
+        match stream with
+        | Statements(nodes, tail) -> Some(StatementBlockNode(nodes), tail)
+        | _ -> None
+      
     let rec (|Statements|_|) (stream:List<Token>)  =
         match stream with
-        | Statement(node, []) -> Some(FinalStatementNode(node), [])
+        | Statement(node, []) -> Some([node], [])
         // TODO: Is there a way to get the close braces out of here and into EnclosedStatements?
-        | Statement(node, CLOSE_BRACES :: tail) -> Some(FinalStatementNode(node), tail)
-        | Statement(node, Statements(next, tail)) -> Some(StatementNode(node, next), tail)
+        | Statement(node, CLOSE_BRACES :: tail) -> Some([node], tail)
+        | Statement(node, Statements(next, tail)) -> Some(List.append [node] next, tail)
         | _ -> failwith ("Cannot parse statement starting: " + stream.Head.Type)
-     
         
     and (|Statement|_|) (stream:List<Token>)  =
         match stream with
@@ -75,8 +78,8 @@ module public rec Parser =
 
     and (|EnclosedStatements|_|) (stream:List<Token>)  =
         match stream with
-        | OPEN_BRACES :: CLOSE_BRACES :: tail -> Some(NoOpNode, tail)
-        | OPEN_BRACES :: (Statements(node, tail)) -> Some(node, tail)
+        | OPEN_BRACES :: CLOSE_BRACES :: tail -> Some(StatementBlockNode([]), tail)
+        | OPEN_BRACES :: (StatementBlock(node, tail)) -> Some(node, tail)
         | _ -> None
     
     // FUNCTIONS
@@ -84,19 +87,19 @@ module public rec Parser =
         match stream with
         | FUNC_DECLARE :: Identifier id :: OPEN_PARENTHESES :: CLOSE_PARENTHESES:: FunctionStatements(funcStmts, tail) -> 
             Some(FuncDefNode(id, funcStmts, []), tail)
-        | FUNC_DECLARE :: Identifier id :: OPEN_PARENTHESES :: (Declarations(parametersNode, CLOSE_PARENTHESES :: FunctionStatements(funcStmts, tail))) -> 
+        | FUNC_DECLARE :: Identifier id :: OPEN_PARENTHESES :: (FunctionDeclarationParameters(parametersNode, CLOSE_PARENTHESES :: FunctionStatements(funcStmts, tail))) -> 
             Some(FuncDefNode(id, funcStmts, parametersNode), tail)
         | _ -> None
     
     and (|FunctionStatements|_|) (stream:List<Token>) =
         match stream with
-        | LAMBDA_OPERATOR :: Statement(node, tail) -> Some(FinalStatementNode(node), tail)
+        | LAMBDA_OPERATOR :: Statement(node, tail) -> Some(StatementBlockNode([node]), tail)
         | EnclosedStatements(node, tail) -> Some(node, tail)
         | _ -> None
 
-    and (|Declarations|_|) (stream:List<Token>)  =
+    and (|FunctionDeclarationParameters|_|) (stream:List<Token>)  =
         match stream with
-        | (DeclareStatement(node, PARAM_DELIMITER :: Declarations(nextDeclarations, tail))) -> 
+        | (DeclareStatement(node, PARAM_DELIMITER :: FunctionDeclarationParameters(nextDeclarations, tail))) -> 
             Some(List.append [node] nextDeclarations, tail)
         | (DeclareStatement(node, tail)) -> 
             Some([node], tail)
@@ -105,5 +108,5 @@ module public rec Parser =
 
     let Parse (stream:List<Token>) =
         match stream with
-        | Statements(node, _) -> node
+        | StatementBlock(node, _) -> node
         | _ -> failwith "Cannot parse statements"
