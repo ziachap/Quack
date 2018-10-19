@@ -83,7 +83,7 @@ module public rec Parser =
         | _ -> None
     
     // FUNCTIONS
-    and (|FunctionDeclaration|_|) (stream:List<Token>) =
+    let rec (|FunctionDeclaration|_|) (stream:List<Token>) =
         match stream with
         | FUNC_DECLARE :: Identifier id :: OPEN_PARENTHESES :: CLOSE_PARENTHESES:: FunctionStatements(funcStmts, tail) -> 
             Some(FuncDefNode(id, funcStmts, []), tail)

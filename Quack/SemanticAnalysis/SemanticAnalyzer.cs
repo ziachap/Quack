@@ -72,6 +72,11 @@ namespace Quack.SemanticAnalysis
 				case AstNodeType.IF_ELSE:
 					VerifyBranchExpressionIsBoolean(node);
 					break;
+				case AstNodeType.BOOLEAN_OPERATOR:
+				case AstNodeType.ARITHMETIC_OPERATOR:
+				case AstNodeType.BOOLEAN_UNARY_OPERATOR:
+					ExpressionType(node);
+					break;
 			}
 		}
 
@@ -81,7 +86,7 @@ namespace Quack.SemanticAnalysis
 			if (parent != null && parent.Type == AstNodeType.FUNC_DEF)
 			{
 				// if this is a statement block for a function, add the function's params to the new context
-				var parameters = parent.Children.Skip(1).Select(MakeDefinition);
+				var parameters = parent.Children.Skip(1).Select(MakeDeclaration);
 				_declarations.PushContext(new DeclarationContext("FUNC_" + parent.Value, new HashSet<IDeclaration>(parameters)));
 			}
 			else
@@ -97,7 +102,7 @@ namespace Quack.SemanticAnalysis
 			{
 				throw new DuplicateDeclarationException(identifier);
 			}
-			var declaration = MakeDefinition(node);
+			var declaration = MakeDeclaration(node);
 			_declarations.AddToCurrentContext(declaration);
 		}
 
@@ -109,7 +114,7 @@ namespace Quack.SemanticAnalysis
 			}
 		}
 
-		private static IDeclaration MakeDefinition(AstNode node)
+		private static IDeclaration MakeDeclaration(AstNode node)
 		{
 			switch (node.Type)
 			{
@@ -119,7 +124,7 @@ namespace Quack.SemanticAnalysis
 				case AstNodeType.FUNC_DEF:
 					return new FunctionDeclaration(node.Value, node.Children.First())
 					{
-						Params = new HashSet<IDeclaration>(node.Children.Skip(1).Select(MakeDefinition))
+						Params = new HashSet<IDeclaration>(node.Children.Skip(1).Select(MakeDeclaration))
 					};
 			}
 
@@ -129,9 +134,23 @@ namespace Quack.SemanticAnalysis
 		private void VerifyHasRequiredParameters(AstNode functionCallNode)
 		{
 			var function = (FunctionDeclaration)_declarations.FindDeclaration(functionCallNode.Value);
-			if (function.Params.Count != functionCallNode.Children.Count)
+			var functionParams = function.Params.ToArray();
+			if (functionParams.Length != functionCallNode.Children.Count)
 			{
 				throw new InvalidFunctionCallException(function);
+			}
+
+			// check types
+			for (var i = 0; i < functionCallNode.Children.Count; i++)
+			{
+				var parameterNode = functionCallNode.Children[i];
+				var parameterNodeType = ExpressionType(parameterNode);
+				var expectedParameterNode = (VariableDeclaration)functionParams[i];
+				if (!expectedParameterNode.IsImplicitlyTyped)
+				{
+					// TODO: Lets think about what 'any' actually means and whether it belongs in function params
+					AssertTypeOrThrow(parameterNodeType, expectedParameterNode.TypeIdentifier);
+				}
 			}
 		}
 

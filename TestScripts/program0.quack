@@ -1,7 +1,7 @@
 
-func someNumber(any a) => print a + 1;
+func someNumber(int a) => print a + 1;
 
-func printSum(any a, int b) {
+func printSum(int a, int b) {
 	print a + b;
 }
 

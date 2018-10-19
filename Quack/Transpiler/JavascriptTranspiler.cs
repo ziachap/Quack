@@ -30,7 +30,7 @@ namespace Quack.Transpiler
 			return _output.ToString();
 		}
 
-		private string FunctionDeclarations(IEnumerable<IDeclaration> declarations)
+		private string AllFunctionDeclarations(IEnumerable<IDeclaration> declarations)
 		{
 			var functionOutputs = declarations
 				.OfType<FunctionDeclaration>()

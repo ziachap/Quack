@@ -39,8 +39,9 @@ namespace Quack.Parser
 		public override string ToString()
 		{
 			var type = Enum.GetName(typeof(AstNodeType), Type);
-			var valueString = Value != null ? " : " + Value : string.Empty;
-			return $"[{type}{valueString}]";
+			var value = Value != null ? " : " + Value : string.Empty;
+			var typeIdentifier = TypeIdentifier != null ? $" <{TypeIdentifier}>": string.Empty;
+			return $"[{type}{typeIdentifier}{value}]";
 		}
 	}
 
