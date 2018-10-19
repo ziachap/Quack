@@ -152,9 +152,13 @@ namespace Quack.SemanticAnalysis
 
 			var expr = node.Children.ElementAt(1);
 			var exprTypeIdentifier = ExpressionType(expr);
-			if (exprTypeIdentifier != declaration.TypeIdentifier && declaration.TypeIdentifier != "any")
+			if (exprTypeIdentifier != declaration.TypeIdentifier && !declaration.IsImplicitlyTyped)
 			{
 				throw new InvalidAssignmentTypeException(declaration, exprTypeIdentifier);
+			}
+			if (declaration.IsImplicitlyTyped)
+			{
+				declaration.ImplicitSetType(exprTypeIdentifier);
 			}
 		}
 
@@ -165,12 +169,21 @@ namespace Quack.SemanticAnalysis
 			return declaration.TypeIdentifier;
 		}
 
+		// TODO: Move this expression type evaluation out somewhere
 		private string ExpressionType(AstNode expr)
 		{
 			switch (expr.Type)
 			{
 				case AstNodeType.ARITHMETIC_OPERATOR:
+					AssertTypesOrThrow(expr.Children.Select(ExpressionType), LanguageConstants.ValueTypes.INT);
+					return expr.TypeIdentifier;
 				case AstNodeType.BOOLEAN_OPERATOR:
+					AssertTypesOrThrow(expr.Children.Select(ExpressionType), LanguageConstants.ValueTypes.BOOL);
+					return expr.TypeIdentifier;
+				case AstNodeType.BOOLEAN_UNARY_OPERATOR:
+					AssertTypeOrThrow(ExpressionType(expr.Children.Single()), LanguageConstants.ValueTypes.BOOL);
+					return expr.TypeIdentifier;
+				case AstNodeType.BOOLEAN_CONSTANT:
 				case AstNodeType.NUMBER:
 					return expr.TypeIdentifier;
 				case AstNodeType.FACTOR:
@@ -179,6 +192,22 @@ namespace Quack.SemanticAnalysis
 					return LookupIdentifierType(expr);
 				default:
 					throw new Exception("Unexpected AstNodeType in expression");
+			}
+		}
+
+		private void AssertTypesOrThrow(IEnumerable<string> actual, string expected)
+		{
+			foreach (var type in actual)
+			{
+				AssertTypeOrThrow(type, expected);
+			}
+		}
+
+		private void AssertTypeOrThrow(string actual, string expected)
+		{
+			if (expected != actual)
+			{
+				throw new InvalidTypeException(expected, actual);
 			}
 		}
 	}

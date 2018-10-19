@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using Quack.Parser;
 
@@ -28,9 +29,24 @@ namespace Quack.SemanticAnalysis
 		public VariableDeclaration(string value, string typeIdentifier) : base(value)
 		{
 			TypeIdentifier = typeIdentifier;
+			IsImplicitlyTyped = typeIdentifier == LanguageConstants.ValueTypes.ANY;
 		}
 
-		public string TypeIdentifier { get; }
+		public string TypeIdentifier { get; private set; }
+
+		public bool IsImplicitlyTyped { get; }
+
+		public void ImplicitSetType(string type)
+		{
+			if (IsImplicitlyTyped)
+			{
+				TypeIdentifier = type;
+			}
+			else
+			{
+				throw new Exception($"Tried to implicitly set type of explicitly typed variable");
+			}
+		}
 	}
 
 	public class FunctionDeclaration : BaseDeclaration

@@ -3,7 +3,6 @@ namespace Quack
 {
 	public static class LanguageConstants
 	{
-		public const string DECLARE = "any";
 		public const string ASSIGN = "=";
 		public const string LAMBDA = "=>";
 		public const string PRINT = "print";
@@ -20,6 +19,7 @@ namespace Quack
 		{
 			public const string INT = "int";
 			public const string BOOL = "bool";
+			public const string ANY = "any";
 		}
 	}
 }

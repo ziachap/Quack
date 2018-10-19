@@ -7,7 +7,7 @@ func printSum(any a, int b) {
 
 func one() => print 1;
 
-int apple = 3;
+any apple = 3;
 any orange;
 bool testBool;
 
