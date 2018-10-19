@@ -8,6 +8,7 @@ namespace Quack.File
 		public string Sanitize(string input)
 		{
 			var output = input;
+			output = PadLambdaOperator(output);
 			output = PadArithmeticOperators(output);
 			output = PadBooleanOperators(output);
 			output = PadUnaryOperators(output);
@@ -24,6 +25,12 @@ namespace Quack.File
 		private static string PadUnaryOperators(string input)
 		{
 			var output = Regex.Replace(input, @"\!", " ! ");
+			return output;
+		}
+		
+		private static string PadLambdaOperator(string input)
+		{
+			var output = Regex.Replace(input, @"\=\>", " => ");
 			return output;
 		}
 

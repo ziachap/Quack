@@ -41,7 +41,7 @@ namespace Quack
 
 		public void Compile(string filePath)
 		{
-			//var input = "declare a ; a = 5 ; print a ;";
+			//var input = "declare a; a = 5; print a;";
 			
 			var input = _reader.LoadFromFile(filePath);
 

@@ -56,6 +56,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Lexer\TokenDefinitions\BooleanOperators\BooleanConstantTokenDefinition.cs" />
     <Compile Include="Lexer\TokenDefinitions\FuncDeclareTokenDefinition.cs" />
     <Compile Include="Lexer\TokenDefinitions\LambdaTokenDefinition.cs" />
     <Compile Include="Lexer\TokenDefinitions\ParamDelimeterTokenDefinition.cs" />

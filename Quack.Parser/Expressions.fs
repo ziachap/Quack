@@ -13,9 +13,15 @@ module Expressions =
         match token with
         | NUMBER n -> Some(NumberNode n)
         | _ -> None
+        
+    let (|BooleanConstant|_|) (token:Token)  =
+        match token with
+        | BOOLEAN_CONSTANT n -> Some(BooleanConstantNode n)
+        | _ -> None
 
     let (|AtomicValue|_|) (token:Token)  =
         match token with
+        | BooleanConstant node -> Some(node)
         | Identifier node -> Some(node)
         | Number node -> Some(node)
         | _ -> None
@@ -53,6 +59,7 @@ module Expressions =
 
     and (|Factor|_|) (stream:List<Token>)  =
         match stream with
+        | BOOLEAN_UNARY_OPERATOR op :: Factor(node, tail) -> Some(BooleanUnaryNode(op, node), tail)
         | OPEN_PARENTHESES :: (Expression(inner, CLOSE_PARENTHESES :: tail)) -> Some(FactorNode(inner), tail)
         | FunctionInvoke (node, tail) -> Some(node, tail)
         | AtomicValue node :: tail -> Some(node, tail)

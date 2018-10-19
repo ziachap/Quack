@@ -1,3 +1,5 @@
+if (!false) {
+}
 function someNumber(a){
   console.log(a + 1);
 }
@@ -10,10 +12,10 @@ function one(){
 var apple = 3;
 var orange;
 var testBool;
-while (apple + 1 < 6 - one()) {
+while (apple + 1 < 6) {
   apple = apple + 1;
 }
-if (apple > 6) {
+if (!true) {
   orange = 5;
 }
 else {

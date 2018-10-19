@@ -58,6 +58,7 @@ namespace Quack
 			kernel.Bind<ITokenDefinition>().To<ElseTokenDefinition>();
 			kernel.Bind<ITokenDefinition>().To<WhileTokenDefinition>();
 			kernel.Bind<ITokenDefinition>().To<PrintTokenDefinition>();
+			kernel.Bind<ITokenDefinition>().To<BooleanConstantTokenDefinition>();
 
 			// value type keywords
 			kernel.Bind<ITokenDefinition>().To<IntTokenDefinition>();
@@ -70,7 +71,7 @@ namespace Quack
 			kernel.Bind<ITokenDefinition>().To<BooleanRelationalOperatorTokenDefinition>();
 			kernel.Bind<ITokenDefinition>().To<BooleanEqualityOperatorTokenDefinition>();
 			kernel.Bind<ITokenDefinition>().To<BooleanLogicOperatorTokenDefinition>();
-			kernel.Bind<ITokenDefinition>().To<BooleanPrefixOperatorTokenDefinition>();
+			kernel.Bind<ITokenDefinition>().To<BooleanUnaryOperatorTokenDefinition>();
 			kernel.Bind<ITokenDefinition>().To<ParamDelimeterTokenDefinition>();
 			kernel.Bind<ITokenDefinition>().To<StatementEndTokenDefinition>();
 

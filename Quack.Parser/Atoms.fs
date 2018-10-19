@@ -3,10 +3,12 @@ module Atoms =
     open Types
 
     (* Token Recognizers *)
-    let (|VAR_DECLARE|_|) (token:Token) = if token.Type = "VAR_DECLARE" then Some() else None
-    let (|PRINT|_|) (token:Token) = if token.Type = "PRINT" then Some() else None
     let (|LABEL|_|) (token:Token) = if token.Type = "LABEL" then Some(token) else None
     let (|NUMBER|_|) (token:Token) = if token.Type = "NUMBER" then Some(token) else None
+    let (|BOOLEAN_CONSTANT|_|) (token:Token) = if token.Type = "BOOLEAN_CONSTANT" then Some(token) else None
+
+    let (|VAR_DECLARE|_|) (token:Token) = if token.Type = "VAR_DECLARE" then Some() else None
+    let (|PRINT|_|) (token:Token) = if token.Type = "PRINT" then Some() else None
     let (|ASSIGN|_|) (token:Token) = if token.Type = "ASSIGN" then Some(token) else None
 
     let (|BOOLEAN_RELATIONAL_OPERATOR|_|) (token:Token) = if token.Type = "BOOLEAN_RELATIONAL_OPERATOR" then Some(token) else None
@@ -30,8 +32,11 @@ module Atoms =
     let (|BOOL|_|) (token:Token) = if token.Type = "BOOL" then Some(token) else None
 
     (* Ast Nodes *)
-    let NumberNode (identifier:Token) : AstNode =
-        { Type = "NUMBER"; Value = identifier.Value; TypeIdentifier = "int"; Children = [] }
+    let NumberNode (number:Token) : AstNode =
+        { Type = "NUMBER"; Value = number.Value; TypeIdentifier = "int"; Children = [] }
+
+    let BooleanConstantNode (boolean:Token) : AstNode =
+        { Type = "BOOLEAN_CONSTANT"; Value = boolean.Value; TypeIdentifier = "bool"; Children = [] }
 
     let IdentifierNode (identifier:Token) : AstNode =
         { Type = "LABEL"; Value = identifier.Value; TypeIdentifier = null; Children = [] }
@@ -47,6 +52,9 @@ module Atoms =
         
     let BooleanNode (left:AstNode, op:Token, right:AstNode) : AstNode =
         { Type = "BOOLEAN_OPERATOR"; Value = op.Value; TypeIdentifier = "bool"; Children = [left; right] }
+
+    let BooleanUnaryNode (op:Token, node:AstNode) : AstNode =
+        { Type = "BOOLEAN_UNARY_OPERATOR"; Value = op.Value; TypeIdentifier = "bool"; Children = [node] }
 
     let FactorNode (exp:AstNode) : AstNode =
         { Type = "FACTOR"; Value = null; TypeIdentifier = null; Children = [exp] }

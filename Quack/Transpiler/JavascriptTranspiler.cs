@@ -167,6 +167,8 @@ namespace Quack.Transpiler
 				case AstNodeType.ARITHMETIC_OPERATOR:
 				case AstNodeType.BOOLEAN_OPERATOR:
 					return Operation(node);
+				case AstNodeType.BOOLEAN_UNARY_OPERATOR:
+					return UnaryOperation(node);
 				default:
 					return $"{node.Value}";
 			}
@@ -178,6 +180,13 @@ namespace Quack.Transpiler
 			var op = node.Value;
 			var right = Expression(node.Children.ElementAt(1));
 			return $"{left} {op} {right}";
+		}
+
+		private string UnaryOperation(AstNode node)
+		{
+			var op = node.Value;
+			var right = Expression(node.Children.Single());
+			return $"{op}{right}";
 		}
 
 		private string StatementEnd() => ";\n";

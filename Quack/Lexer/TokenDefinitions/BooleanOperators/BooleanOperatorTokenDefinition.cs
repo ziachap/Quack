@@ -27,7 +27,7 @@ namespace Quack.Lexer.TokenDefinitions.BooleanOperators
 		public Token GetToken(string term) => new Token(TokenType.BOOLEAN_LOGIC_OPERATOR, term);
 	}
 
-	public class BooleanPrefixOperatorTokenDefinition : ITokenDefinition
+	public class BooleanUnaryOperatorTokenDefinition : ITokenDefinition
 	{
 		public bool IsMatch(string term) => term == "!";
 
