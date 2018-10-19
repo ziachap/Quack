@@ -24,6 +24,7 @@ module Atoms =
     let (|ELSE|_|) (token:Token) = if token.Type = "ELSE" then Some() else None
     let (|WHILE|_|) (token:Token) = if token.Type = "WHILE" then Some() else None
     let (|FUNC_DECLARE|_|) (token:Token) = if token.Type = "FUNC_DECLARE" then Some() else None
+    let (|LAMBDA_OPERATOR|_|) (token:Token) = if token.Type = "LAMBDA_OPERATOR" then Some() else None
     let (|PARAM_DELIMITER|_|) (token:Token) = if token.Type = "PARAM_DELIMITER" then Some() else None
     let (|INT|_|) (token:Token) = if token.Type = "INT" then Some(token) else None
     let (|BOOL|_|) (token:Token) = if token.Type = "BOOL" then Some(token) else None

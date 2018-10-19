@@ -1,9 +1,9 @@
+
+
+func someNumber(any a) => print a + 1;
+
 func printSum(any a, int b) {
 	print a + b;
-}
-
-func someNumber(any a) {
-	print a + 1;
 }
 
 func one() {

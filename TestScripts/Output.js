@@ -1,13 +1,11 @@
-function printSum(a, b){
-  console.log(a + b);
-}
 function someNumber(a){
   console.log(a + 1);
 }
+function printSum(a, b){
+  console.log(a + b);
+}
 function one(){
   console.log(1);
-    if ((2 + 5 > 3) && 4 == 4) {
-  }
 }
 var apple = 3;
 var orange;

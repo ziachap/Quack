@@ -82,10 +82,16 @@ module public rec Parser =
     // FUNCTIONS
     and (|FunctionDeclaration|_|) (stream:List<Token>) =
         match stream with
-        | FUNC_DECLARE :: Identifier id :: OPEN_PARENTHESES :: CLOSE_PARENTHESES:: EnclosedStatements(funcStmts, tail) -> 
+        | FUNC_DECLARE :: Identifier id :: OPEN_PARENTHESES :: CLOSE_PARENTHESES:: FunctionStatements(funcStmts, tail) -> 
             Some(FuncDefNode(id, funcStmts, []), tail)
-        | FUNC_DECLARE :: Identifier id :: OPEN_PARENTHESES :: (Declarations(parametersNode, CLOSE_PARENTHESES :: EnclosedStatements(funcStmts, tail))) -> 
+        | FUNC_DECLARE :: Identifier id :: OPEN_PARENTHESES :: (Declarations(parametersNode, CLOSE_PARENTHESES :: FunctionStatements(funcStmts, tail))) -> 
             Some(FuncDefNode(id, funcStmts, parametersNode), tail)
+        | _ -> None
+    
+    and (|FunctionStatements|_|) (stream:List<Token>) =
+        match stream with
+        | LAMBDA_OPERATOR :: Statement(node, tail) -> Some(FinalStatementNode(node), tail)
+        | EnclosedStatements(node, tail) -> Some(node, tail)
         | _ -> None
 
     and (|Declarations|_|) (stream:List<Token>)  =

@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Lexer\TokenDefinitions\FuncDeclareTokenDefinition.cs" />
+    <Compile Include="Lexer\TokenDefinitions\LambdaTokenDefinition.cs" />
     <Compile Include="Lexer\TokenDefinitions\ParamDelimeterTokenDefinition.cs" />
     <Compile Include="Lexer\TokenDefinitions\WhileTokenDefinition.cs" />
     <Compile Include="Parser\LegacyParser\Brackets\BracketService.cs" />

@@ -5,6 +5,7 @@ namespace Quack
 	{
 		public const string DECLARE = "any";
 		public const string ASSIGN = "=";
+		public const string LAMBDA = "=>";
 		public const string PRINT = "print";
 		public const string STATEMENT_END = ";";
 		public const string PARAM_DELIMITER = ",";

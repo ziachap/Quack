@@ -65,6 +65,7 @@ namespace Quack
 
 			// symbols
 			kernel.Bind<ITokenDefinition>().To<AssignTokenDefinition>();
+			kernel.Bind<ITokenDefinition>().To<LambdaTokenDefinition>();
 			kernel.Bind<ITokenDefinition>().To<ArithmeticOperatorTokenDefinition>();
 			kernel.Bind<ITokenDefinition>().To<BooleanRelationalOperatorTokenDefinition>();
 			kernel.Bind<ITokenDefinition>().To<BooleanEqualityOperatorTokenDefinition>();

@@ -37,7 +37,7 @@ namespace Quack.File
 
 		private static string PadBooleanOperators(string input)
 		{
-			var output = Regex.Replace(input, @"\>", " > ");
+			var output = Regex.Replace(input, @"\>!\=\>", " > ");
 			output = Regex.Replace(output, @"\<", " < ");
 			output = Regex.Replace(output, @"\>\=", " >= ");
 			output = Regex.Replace(output, @"\<\=", " <= ");
