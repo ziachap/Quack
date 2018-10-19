@@ -81,9 +81,9 @@ namespace Quack
 			kernel.Bind<ITokenDefinition>().To<OpenBracesTokenDefinition>();
 			kernel.Bind<ITokenDefinition>().To<CloseBracesTokenDefinition>();
 
-			// labels/values
+			// identifiers/values
 			kernel.Bind<ITokenDefinition>().To<NumberTokenDefinition>();
-			kernel.Bind<ITokenDefinition>().To<LabelTokenDefinition>();
+			kernel.Bind<ITokenDefinition>().To<IdentifierTokenDefinition>();
 		}
 
 	}

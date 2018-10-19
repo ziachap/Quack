@@ -23,7 +23,7 @@ namespace Quack.Lexer.TokenDefinitions
 		STATEMENT_END,
 		PRINT,
 		NUMBER,
-		LABEL,
+		IDENTIFIER,
 		OPEN_PARENTHESES,
 		CLOSE_PARENTHESES,
 		OPEN_BRACES,

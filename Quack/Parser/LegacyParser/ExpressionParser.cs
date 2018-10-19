@@ -30,9 +30,9 @@ namespace Quack.Parser.LegacyParser
 			{
 				return Operation(tokens, AstNodeType.BOOLEAN_OPERATOR);
 			}
-			if (tokens.IsNextType(TokenType.LABEL) || tokens.IsNextType(TokenType.NUMBER))
+			if (tokens.IsNextType(TokenType.IDENTIFIER) || tokens.IsNextType(TokenType.NUMBER))
 			{
-				return LabelOrConstant(tokens);
+				return IdentifierOrConstant(tokens);
 			}
 
 			throw new ParseException("Unexpected token: " + TokenTypeName(tokens.Peek().Type));
@@ -59,7 +59,7 @@ namespace Quack.Parser.LegacyParser
 		}
 
 		private AstNode Operation(TokenQueue tokens, AstNodeType operationType) 
-			=> Operation(tokens, operationType, LabelOrConstant(tokens));
+			=> Operation(tokens, operationType, IdentifierOrConstant(tokens));
 
 		private AstNode Operation(TokenQueue tokens, AstNodeType operationType, AstNode leftNode)
 		{
@@ -68,21 +68,21 @@ namespace Quack.Parser.LegacyParser
 			return new AstNode(operationType, op.Value, children);
 		}
 
-		private AstNode LabelOrConstant(TokenQueue tokens)
+		private AstNode IdentifierOrConstant(TokenQueue tokens)
 		{
 			var token = tokens.Dequeue();
 			switch (token.Type)
 			{
-				case TokenType.LABEL:
-					return Label(token);
+				case TokenType.IDENTIFIER:
+					return Identifier(token);
 				case TokenType.NUMBER:
 					return Number(token);
 				default:
-					throw new ParseException("Expected a label or constant");
+					throw new ParseException("Expected an identifier or constant");
 			}
 		}
 
-		private static AstNode Label(Token token) => new AstNode(AstNodeType.LABEL, token.Value);
+		private static AstNode Identifier(Token token) => new AstNode(AstNodeType.IDENTIFIER, token.Value);
 
 		private static AstNode Number(Token token) => new AstNode(AstNodeType.NUMBER, token.Value);
 		

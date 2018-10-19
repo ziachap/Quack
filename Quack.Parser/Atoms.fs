@@ -3,7 +3,7 @@ module Atoms =
     open Types
 
     (* Token Recognizers *)
-    let (|LABEL|_|) (token:Token) = if token.Type = "LABEL" then Some(token) else None
+    let (|IDENTIFIER|_|) (token:Token) = if token.Type = "IDENTIFIER" then Some(token) else None
     let (|NUMBER|_|) (token:Token) = if token.Type = "NUMBER" then Some(token) else None
     let (|BOOLEAN_CONSTANT|_|) (token:Token) = if token.Type = "BOOLEAN_CONSTANT" then Some(token) else None
 
@@ -39,7 +39,7 @@ module Atoms =
         { Type = "BOOLEAN_CONSTANT"; Value = boolean.Value; TypeIdentifier = "bool"; Children = [] }
 
     let IdentifierNode (identifier:Token) : AstNode =
-        { Type = "LABEL"; Value = identifier.Value; TypeIdentifier = null; Children = [] }
+        { Type = "IDENTIFIER"; Value = identifier.Value; TypeIdentifier = null; Children = [] }
         
     let TypeIdentifierNode (identifier:Token) : AstNode =
         { Type = "TYPE_IDENTIFIER"; Value = identifier.Value; TypeIdentifier = null; Children = [] }

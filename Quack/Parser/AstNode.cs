@@ -57,7 +57,7 @@ namespace Quack.Parser
 		PRINT,
 		NUMBER,
 		BOOLEAN_CONSTANT,
-		LABEL,
+		IDENTIFIER,
 		FACTOR,
 		IF_ELSE,
 		WHILE,

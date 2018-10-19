@@ -56,7 +56,7 @@ namespace Quack.SemanticAnalysis
 				case AstNodeType.FUNC_DEF:
 					Declaration(node);
 					break;
-				case AstNodeType.LABEL:
+				case AstNodeType.IDENTIFIER:
 					VerifyDeclarationExists(node);
 					break;
 				case AstNodeType.FUNC_INVOKE:
@@ -74,10 +74,10 @@ namespace Quack.SemanticAnalysis
 
 		private void Declaration(AstNode node)
 		{
-			var label = node.Value;
-			if (_declarations.ExistsInScope(label))
+			var identifier = node.Value;
+			if (_declarations.ExistsInScope(identifier))
 			{
-				throw new DuplicateDeclarationException(label);
+				throw new DuplicateDeclarationException(identifier);
 			}
 			var declaration = MakeDefinition(node);
 			_declarations.AddToCurrentContext(declaration);
@@ -87,7 +87,7 @@ namespace Quack.SemanticAnalysis
 		{
 			if (!_declarations.ExistsInScope(node.Value))
 			{
-				throw new LabelNotDeclaredException(node.Value);
+				throw new IdentifierNotDeclaredException(node.Value);
 			}
 		}
 
@@ -157,7 +157,7 @@ namespace Quack.SemanticAnalysis
 					return expr.TypeIdentifier;
 				case AstNodeType.FACTOR:
 					return ExpressionType(expr.Children.Single());
-				case AstNodeType.LABEL:
+				case AstNodeType.IDENTIFIER:
 					return LookupIdentifierType(expr);
 				default:
 					throw new Exception("Unexpected AstNodeType in expression");

@@ -31,14 +31,14 @@ namespace Quack.Tests
 			{
 				new Token(TokenType.NUMBER, "num1"),
 				new Token(TokenType.ARITHMETIC_OPERATOR, "op1"),
-				new Token(TokenType.LABEL, "label1")
+				new Token(TokenType.IDENTIFIER, "identifier1")
 			});
 
 			var result = Act(tokens);
 
 			AssertAstNode(result, AstNodeType.ARITHMETIC_OPERATOR, "op1");
 			AssertAstNode(result.Children.ElementAt(0), AstNodeType.NUMBER, "num1");
-			AssertAstNode(result.Children.ElementAt(1), AstNodeType.LABEL, "label1");
+			AssertAstNode(result.Children.ElementAt(1), AstNodeType.IDENTIFIER, "identifier1");
 		}
 
 		[Test]
@@ -48,27 +48,27 @@ namespace Quack.Tests
 			{
 				new Token(TokenType.NUMBER, "num1"),
 				new Token(TokenType.BOOLEAN_RELATIONAL_OPERATOR, "op1"),
-				new Token(TokenType.LABEL, "label1")
+				new Token(TokenType.IDENTIFIER, "identifier1")
 			});
 
 			var result = Act(tokens);
 
 			AssertAstNode(result, AstNodeType.BOOLEAN_OPERATOR, "op1");
 			AssertAstNode(result.Children.ElementAt(0), AstNodeType.NUMBER, "num1");
-			AssertAstNode(result.Children.ElementAt(1), AstNodeType.LABEL, "label1");
+			AssertAstNode(result.Children.ElementAt(1), AstNodeType.IDENTIFIER, "identifier1");
 		}
 
 		[Test]
-		public void ParseExpression_Can_Parse_Label()
+		public void ParseExpression_Can_Parse_Identifier()
 		{
 			var tokens = new TokenQueue(new[]
 			{
-				new Token(TokenType.LABEL, "label1")
+				new Token(TokenType.IDENTIFIER, "identifier1")
 			});
 
 			var result = Act(tokens);
 			
-			AssertAstNode(result, AstNodeType.LABEL, "label1");
+			AssertAstNode(result, AstNodeType.IDENTIFIER, "identifier1");
 		}
 
 		[Test]
@@ -93,10 +93,10 @@ namespace Quack.Tests
 				new Token(TokenType.OPEN_PARENTHESES, "("),
 				new Token(TokenType.NUMBER, "num1"),
 				new Token(TokenType.ARITHMETIC_OPERATOR, "op1"),
-				new Token(TokenType.LABEL, "label1"),
+				new Token(TokenType.IDENTIFIER, "identifier1"),
 				new Token(TokenType.CLOSE_PARENTHESES, ")"),
 				new Token(TokenType.ARITHMETIC_OPERATOR, "op2"),
-				new Token(TokenType.LABEL, "label2"),
+				new Token(TokenType.IDENTIFIER, "identifier2"),
 				new Token(TokenType.CLOSE_PARENTHESES, ")"),
 			});
 
@@ -107,12 +107,12 @@ namespace Quack.Tests
 			var outerOp = result.Children.Single();
 			AssertAstNode(outerOp, AstNodeType.ARITHMETIC_OPERATOR, "op2");
 			AssertAstNode(outerOp.Children.ElementAt(0), AstNodeType.FACTOR);
-			AssertAstNode(outerOp.Children.ElementAt(1), AstNodeType.LABEL, "label2");
+			AssertAstNode(outerOp.Children.ElementAt(1), AstNodeType.IDENTIFIER, "identifier2");
 
 			var innerOp = outerOp.Children.ElementAt(0).Children.Single();
 			AssertAstNode(innerOp, AstNodeType.ARITHMETIC_OPERATOR, "op1");
 			AssertAstNode(innerOp.Children.ElementAt(0), AstNodeType.NUMBER, "num1");
-			AssertAstNode(innerOp.Children.ElementAt(1), AstNodeType.LABEL, "label1");
+			AssertAstNode(innerOp.Children.ElementAt(1), AstNodeType.IDENTIFIER, "identifier1");
 		}
 
 		[Test]

@@ -17,22 +17,22 @@ module internal Program =
     let main argv =
         let testTokens = [ 
             {Type = "DECLARE"; Value = "declare"};
-            {Type = "LABEL"; Value = "apples"};
+            {Type = "IDENTIFIER"; Value = "apples"};
             {Type = "ASSIGN_OP"; Value = "="}; 
-            {Type = "LABEL"; Value = "oranges"};
+            {Type = "IDENTIFIER"; Value = "oranges"};
             {Type = "ARITHMETIC_OP"; Value = "+"};
             {Type = "OPEN_PARENTHESES"; Value = "("}; 
-            {Type = "LABEL"; Value = "oranges"};
+            {Type = "IDENTIFIER"; Value = "oranges"};
             {Type = "ARITHMETIC_OP"; Value = "+"};
             {Type = "NUMBER"; Value = "4"};
             {Type = "CLOSE_PARENTHESES"; Value = ")"};
             {Type = "ARITHMETIC_OP"; Value = "+"};
-            {Type = "LABEL"; Value = "pears"};
+            {Type = "IDENTIFIER"; Value = "pears"};
             {Type = "ST_END"; Value = ";"}; 
             {Type = "DECLARE"; Value = "declare"};
-            {Type = "LABEL"; Value = "apples"};
+            {Type = "IDENTIFIER"; Value = "apples"};
             {Type = "ASSIGN_OP"; Value = "="}; 
-            {Type = "LABEL"; Value = "pears"};
+            {Type = "IDENTIFIER"; Value = "pears"};
             {Type = "ST_END"; Value = ";"}; 
         ]
         //let parsed = Statements testTokens

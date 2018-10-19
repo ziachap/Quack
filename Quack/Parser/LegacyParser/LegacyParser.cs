@@ -60,8 +60,8 @@ namespace Quack.Parser.LegacyParser
 					return FuncDeclare(tokens);
 				case TokenType.VAR_DECLARE:
 					return VarDeclare(tokens);
-				case TokenType.LABEL:
-					return Label(tokens);
+				case TokenType.IDENTIFIER:
+					return Identifier(tokens);
 				case TokenType.PRINT:
 					return Print(tokens);
 				case TokenType.IF:
@@ -112,9 +112,9 @@ namespace Quack.Parser.LegacyParser
 		{
 			tokens.Skip(TokenType.FUNC_DECLARE);
 
-			var label = tokens.Dequeue();
+			var identifier = tokens.Dequeue();
 
-			var funcNode = new AstNode(AstNodeType.FUNC_DEF, label.Value);
+			var funcNode = new AstNode(AstNodeType.FUNC_DEF, identifier.Value);
 
 
 			var paramTokens = _bracketService.TakeEnclosedTokens(tokens, BracketSets.Parentheses);
@@ -150,14 +150,14 @@ namespace Quack.Parser.LegacyParser
 			}
 			else
 			{
-				var labelToken = tokens.Dequeue();
-				declareNode.Children.Add(Label(labelToken));
+				var identifierToken = tokens.Dequeue();
+				declareNode.Children.Add(Identifier(identifierToken));
 			}
 			
 			return declareNode;
 		}
 
-		private AstNode Label(TokenQueue tokens)
+		private AstNode Identifier(TokenQueue tokens)
 		{
 			return IsFunctionCall() ? FunctionCall(tokens) : Assign(tokens);
 			bool IsFunctionCall() => tokens.IsNextType(TokenType.OPEN_PARENTHESES, 1);
@@ -165,8 +165,8 @@ namespace Quack.Parser.LegacyParser
 
 		private AstNode FunctionCall(TokenQueue tokens)
 		{
-			var funcLabel = tokens.Dequeue().Value;
-			var funcCallNode = new AstNode(AstNodeType.FUNC_INVOKE, funcLabel);
+			var funcIdentifier = tokens.Dequeue().Value;
+			var funcCallNode = new AstNode(AstNodeType.FUNC_INVOKE, funcIdentifier);
 
 			var paramTokens = _bracketService.TakeEnclosedTokens(tokens, BracketSets.Parentheses);
 
@@ -188,8 +188,8 @@ namespace Quack.Parser.LegacyParser
 			var assignNode = new AstNode(AstNodeType.ASSIGN);
 
 			var assignmentTarget = tokens.Dequeue();
-			assignmentTarget.AssertType(TokenType.LABEL);
-			assignNode.Children.Add(Label(assignmentTarget));
+			assignmentTarget.AssertType(TokenType.IDENTIFIER);
+			assignNode.Children.Add(Identifier(assignmentTarget));
 
 			tokens.Skip(TokenType.ASSIGN);
 
@@ -216,10 +216,10 @@ namespace Quack.Parser.LegacyParser
 			return statementEndNode;
 		}
 
-		private static AstNode Label(Token token)
+		private static AstNode Identifier(Token token)
 		{
-			token.AssertType(TokenType.LABEL);
-			return new AstNode(AstNodeType.LABEL, token.Value);
+			token.AssertType(TokenType.IDENTIFIER);
+			return new AstNode(AstNodeType.IDENTIFIER, token.Value);
 		}
 
 		private static string TokenTypeName(TokenType type) 

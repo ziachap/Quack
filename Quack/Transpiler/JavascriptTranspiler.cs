@@ -86,11 +86,11 @@ namespace Quack.Transpiler
 		
 		private string FunctionDeclaration(AstNode node)
 		{
-			var label = node.Value;
+			var identifier = node.Value;
 			var statements = Indented(() => Statements(node.Children.First()));
 			var parameters = FunctionParameters(node.Children.Skip(1).Select(d => d.Value));
 
-			return $"function {label}({parameters}){{\n{statements}{Indentation()}}}";
+			return $"function {identifier}({parameters}){{\n{statements}{Indentation()}}}";
 		}
 
 		private string FunctionCall(AstNode node)
@@ -118,9 +118,9 @@ namespace Quack.Transpiler
 
 		private string Assign(AstNode node)
 		{
-			var label = node.Children.First().Value;
+			var identifier = node.Children.First().Value;
 			var value = Expression(node.Children.ElementAt(1));
-			return $"{label} = {value}";
+			return $"{identifier} = {value}";
 		}
 
 		private string IfElse(AstNode node)

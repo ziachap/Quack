@@ -4,8 +4,8 @@ namespace Quack.SemanticAnalysis.Exceptions
 {
 	public class DuplicateDeclarationException : Exception
 	{
-		public DuplicateDeclarationException(string label) 
-			: base($"Identifier '{label}' has already been declared")
+		public DuplicateDeclarationException(string identifier) 
+			: base($"Identifier '{identifier}' has already been declared")
 		{
 		}
 	}

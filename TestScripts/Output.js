@@ -1,5 +1,3 @@
-if (!false) {
-}
 function someNumber(a){
   console.log(a + 1);
 }

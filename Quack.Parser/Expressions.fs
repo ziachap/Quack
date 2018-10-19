@@ -6,7 +6,7 @@ module Expressions =
     (* Atoms *)
     let (|Identifier|_|) (token:Token)  =
         match token with
-        | LABEL id -> Some(IdentifierNode id)
+        | IDENTIFIER id -> Some(IdentifierNode id)
         | _ -> None
 
     let (|Number|_|) (token:Token)  =
