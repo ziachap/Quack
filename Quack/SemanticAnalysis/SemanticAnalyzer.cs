@@ -66,6 +66,9 @@ namespace Quack.SemanticAnalysis
 				case AstNodeType.ASSIGN:
 					VerifyValidTypeforAssignment(node);
 					break;
+				case AstNodeType.IF_ELSE:
+					VerifyBranchExpressionIsBoolean(node);
+					break;
 			}
 		}
 
@@ -111,6 +114,15 @@ namespace Quack.SemanticAnalysis
 			if (function.Params.Count != functionCallNode.Children.Count)
 			{
 				throw new InvalidFunctionCallException(function);
+			}
+		}
+
+		private void VerifyBranchExpressionIsBoolean(AstNode node)
+		{
+			var expr = node.Children.First();
+			if (expr.TypeIdentifier != LanguageConstants.ValueTypes.BOOL)
+			{
+				throw new InvalidTypeException(LanguageConstants.ValueTypes.BOOL, expr.TypeIdentifier);
 			}
 		}
 

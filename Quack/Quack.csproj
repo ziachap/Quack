@@ -73,7 +73,7 @@
     <Compile Include="Lexer\TermNotSupportedException.cs" />
     <Compile Include="Lexer\TokenDefinitions\ArithmeticOperatorTokenDefinition.cs" />
     <Compile Include="Lexer\TokenDefinitions\AssignTokenDefinition.cs" />
-    <Compile Include="Lexer\TokenDefinitions\BooleanOperatorTokenDefinition.cs" />
+    <Compile Include="Lexer\TokenDefinitions\BooleanOperators\BooleanOperatorTokenDefinition.cs" />
     <Compile Include="Lexer\TokenDefinitions\BracesAndParentheses\CloseBracesTokenDefinition.cs" />
     <Compile Include="Lexer\TokenDefinitions\BracesAndParentheses\CloseParenthesisTokenDefinition.cs" />
     <Compile Include="Lexer\TokenDefinitions\DeclareTokenDefinition.cs" />

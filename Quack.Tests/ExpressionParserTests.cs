@@ -47,7 +47,7 @@ namespace Quack.Tests
 			var tokens = new TokenQueue(new[]
 			{
 				new Token(TokenType.NUMBER, "num1"),
-				new Token(TokenType.BOOLEAN_OPERATOR, "op1"),
+				new Token(TokenType.BOOLEAN_RELATIONAL_OPERATOR, "op1"),
 				new Token(TokenType.LABEL, "label1")
 			});
 

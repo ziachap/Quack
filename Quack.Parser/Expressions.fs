@@ -20,26 +20,53 @@ module Expressions =
         | Number node -> Some(node)
         | _ -> None
  
-    (* Expressions *)  
+    (* Expressions *)             
+        
     let rec (|Expression|_|) (stream:List<Token>)  =
         match stream with
-        | Arithmetic(node, tail) -> Some(node, tail)
+        | BooleanLogicExpression(node, tail) -> Some(node, tail)
+        | _ -> None
+    
+    and (|BooleanLogicExpression|_|) (stream:List<Token>)  =
+        match stream with
+        | BooleanEqualityExpression(left, BOOLEAN_LOGIC_OPERATOR op :: (BooleanEqualityExpression(right, tail))) -> Some(BooleanNode(left, op, right), tail)
+        | BooleanEqualityExpression(node, tail) -> Some(node, tail)
+        | _ -> None
+    
+    and (|BooleanEqualityExpression|_|) (stream:List<Token>)  =
+        match stream with
+        | BooleanRelationalExpression(left, BOOLEAN_EQUALITY_OPERATOR op :: (BooleanRelationalExpression(right, tail))) -> Some(BooleanNode(left, op, right), tail)
+        | BooleanRelationalExpression(node, tail) -> Some(node, tail)
+        | _ -> None
+
+    and (|BooleanRelationalExpression|_|) (stream:List<Token>)  =
+        match stream with
+        | ArithmeticExpression(left, BOOLEAN_RELATIONAL_OPERATOR op :: (ArithmeticExpression(right, tail))) -> Some(BooleanNode(left, op, right), tail)
+        | ArithmeticExpression(node, tail) -> Some(node, tail)
+        | _ -> None
+        
+    and (|ArithmeticExpression|_|) (stream:List<Token>)  =
+        match stream with
+        | Factor(left, ARITHMETIC_OPERATOR op :: (Factor(right, tail))) -> Some(ArithmeticNode(left, op, right), tail)
         | Factor(node, tail) -> Some(node, tail)
-        | AtomicValue node :: tail -> Some(node, tail)
         | _ -> None
 
     and (|Factor|_|) (stream:List<Token>)  =
         match stream with
         | OPEN_PARENTHESES :: (Expression(inner, CLOSE_PARENTHESES :: tail)) -> Some(FactorNode(inner), tail)
+        | FunctionInvoke (node, tail) -> Some(node, tail)
+        | AtomicValue node :: tail -> Some(node, tail)
         | _ -> None
 
-    and (|Arithmetic|_|) (stream:List<Token>)  =
+    and (|FunctionInvoke|_|) (stream:List<Token>) =
         match stream with
-        | AtomicValue left :: ARITHMETIC_OPERATOR op :: (Expression(right, tail)) -> Some(ArithmeticNode(left, op, right), tail)
-        | Factor(left, ARITHMETIC_OPERATOR op :: (Expression(right, tail))) -> Some(ArithmeticNode(left, op, right), tail)
-        | _ -> None
+        | Identifier id :: OPEN_PARENTHESES :: CLOSE_PARENTHESES :: tail -> Some(FuncInvokeNode(id, []), tail)
+        | Identifier id :: OPEN_PARENTHESES :: FunctionParams(parameterNodes, CLOSE_PARENTHESES :: tail) -> 
+            Some(FuncInvokeNode(id, parameterNodes), tail)
+        | _ -> None 
 
-    and (|BooleanExpression|_|) (stream:List<Token>)  =
+    and (|FunctionParams|_|) (stream:List<Token>)  =
         match stream with
-        | Expression(left, BOOLEAN_OPERATOR op :: (Expression(right, tail))) -> Some(BooleanNode(left, op, right), tail)
+        | (Expression(node, PARAM_DELIMITER :: FunctionParams(next, tail))) -> Some(List.append [node] next, tail)
+        | (Expression(node, tail)) -> Some([node], tail)
         | _ -> None

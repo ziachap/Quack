@@ -9,4 +9,12 @@ namespace Quack.SemanticAnalysis.Exceptions
 		{
 		}
 	}
+
+	public class InvalidTypeException : Exception
+	{
+		public InvalidTypeException(string expected, string actual)
+			: base($"Expected type <{expected}> but got type <{actual}>")
+		{
+		}
+	}
 }

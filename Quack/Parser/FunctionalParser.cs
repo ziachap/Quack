@@ -17,7 +17,7 @@ namespace Quack.Parser
 			{
 				result = Parser.Parse(ListModule.OfSeq(tokens.Select(AsParserToken)));
 			}
-			catch(Exception ex)
+			catch(ParseException ex)
 			{
 				throw new ParseException("There was a problem parsing the source file", ex);
 			}

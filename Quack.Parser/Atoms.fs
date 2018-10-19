@@ -8,7 +8,12 @@ module Atoms =
     let (|LABEL|_|) (token:Token) = if token.Type = "LABEL" then Some(token) else None
     let (|NUMBER|_|) (token:Token) = if token.Type = "NUMBER" then Some(token) else None
     let (|ASSIGN|_|) (token:Token) = if token.Type = "ASSIGN" then Some(token) else None
-    let (|BOOLEAN_OPERATOR|_|) (token:Token) = if token.Type = "BOOLEAN_OPERATOR" then Some(token) else None
+
+    let (|BOOLEAN_RELATIONAL_OPERATOR|_|) (token:Token) = if token.Type = "BOOLEAN_RELATIONAL_OPERATOR" then Some(token) else None
+    let (|BOOLEAN_EQUALITY_OPERATOR|_|) (token:Token) = if token.Type = "BOOLEAN_EQUALITY_OPERATOR" then Some(token) else None
+    let (|BOOLEAN_LOGIC_OPERATOR|_|) (token:Token) = if token.Type = "BOOLEAN_LOGIC_OPERATOR" then Some(token) else None
+    let (|BOOLEAN_UNARY_OPERATOR|_|) (token:Token) = if token.Type = "BOOLEAN_UNARY_OPERATOR" then Some(token) else None
+
     let (|ARITHMETIC_OPERATOR|_|) (token:Token) = if token.Type = "ARITHMETIC_OPERATOR" then Some(token) else None
     let (|STATEMENT_END|_|) (token:Token) = if token.Type = "STATEMENT_END" then Some() else None
     let (|OPEN_PARENTHESES|_|) (token:Token) = if token.Type = "OPEN_PARENTHESES" then Some() else None
@@ -56,10 +61,9 @@ module Atoms =
         
     let FinalStatementNode (statement:AstNode) : AstNode =
         { Type = "STATEMENT"; Value = null; TypeIdentifier = null; Children = [statement] }
-     
-    // not used
-    //let NoOpNode : AstNode =
-    //    { Type = "NO_OP"; Value = null; Children = [] }
+    
+    let NoOpNode : AstNode =
+        { Type = "NO_OP"; Value = null; TypeIdentifier = null; Children = [] }
         
     let IfNode (exp:AstNode, ifStatements:AstNode) : AstNode =
         { Type = "IF_ELSE"; Value = null; TypeIdentifier = null; Children = [exp; ifStatements] }

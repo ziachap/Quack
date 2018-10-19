@@ -26,7 +26,7 @@ namespace Quack.Parser.LegacyParser
 			{
 				return Operation(tokens, AstNodeType.ARITHMETIC_OPERATOR);
 			}
-			if (tokens.IsNextType(TokenType.BOOLEAN_OPERATOR, 1))
+			if (tokens.IsNextType(TokenType.BOOLEAN_RELATIONAL_OPERATOR, 1))
 			{
 				return Operation(tokens, AstNodeType.BOOLEAN_OPERATOR);
 			}
@@ -50,7 +50,7 @@ namespace Quack.Parser.LegacyParser
 				{
 					case TokenType.ARITHMETIC_OPERATOR:
 						return Operation(tokens, AstNodeType.ARITHMETIC_OPERATOR, factor);
-					case TokenType.BOOLEAN_OPERATOR:
+					case TokenType.BOOLEAN_RELATIONAL_OPERATOR:
 						return Operation(tokens, AstNodeType.BOOLEAN_OPERATOR, factor);
 				}
 			}

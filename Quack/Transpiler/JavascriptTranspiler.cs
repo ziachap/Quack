@@ -77,6 +77,8 @@ namespace Quack.Transpiler
 					return FunctionDeclaration(node) + BracedEnd();
 				case AstNodeType.FUNC_INVOKE:
 					return FunctionCall(node) + StatementEnd();
+				case AstNodeType.NO_OP:
+					return string.Empty;
 				default:
 					throw new TranspilerException("AstNodeType not supported");
 			}
@@ -156,14 +158,18 @@ namespace Quack.Transpiler
 
 		private string Expression(AstNode node)
 		{
-			if (node.Type == AstNodeType.FACTOR)
+			switch (node.Type)
 			{
-				return $"({Expression(node.Children.Single())})";
+				case AstNodeType.FACTOR:
+					return $"({Expression(node.Children.Single())})";
+				case AstNodeType.FUNC_INVOKE:
+					return FunctionCall(node);
+				case AstNodeType.ARITHMETIC_OPERATOR:
+				case AstNodeType.BOOLEAN_OPERATOR:
+					return Operation(node);
+				default:
+					return $"{node.Value}";
 			}
-
-			return node.Type == AstNodeType.ARITHMETIC_OPERATOR || node.Type == AstNodeType.BOOLEAN_OPERATOR
-				? Operation(node) 
-				: $"{node.Value}";
 		}
 
 		private string Operation(AstNode node)

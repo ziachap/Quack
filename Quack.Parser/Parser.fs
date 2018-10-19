@@ -1,5 +1,5 @@
 ﻿namespace Quack.Parser
-module public Parser = 
+module public rec Parser = 
     open Types
     open Atoms
     open Expressions
@@ -70,11 +70,12 @@ module public Parser =
 
     and (|EnclosedBooleanExpression|_|) (stream:List<Token>)  =
         match stream with
-        | OPEN_PARENTHESES :: (BooleanExpression(node, CLOSE_PARENTHESES :: tail)) -> Some(node, tail)
+        | OPEN_PARENTHESES :: (Expression(node, CLOSE_PARENTHESES :: tail)) -> Some(node, tail)
         | _ -> None
 
     and (|EnclosedStatements|_|) (stream:List<Token>)  =
         match stream with
+        | OPEN_BRACES :: CLOSE_BRACES :: tail -> Some(NoOpNode, tail)
         | OPEN_BRACES :: (Statements(node, tail)) -> Some(node, tail)
         | _ -> None
     
@@ -95,18 +96,6 @@ module public Parser =
             Some([node], tail)
         | _ -> None
         
-    and (|FunctionInvoke|_|) (stream:List<Token>) =
-        match stream with
-        | Identifier id :: OPEN_PARENTHESES :: CLOSE_PARENTHESES :: tail -> Some(FuncInvokeNode(id, []), tail)
-        | Identifier id :: OPEN_PARENTHESES :: FunctionParams(parameterNodes, CLOSE_PARENTHESES :: tail) -> 
-            Some(FuncInvokeNode(id, parameterNodes), tail)
-        | _ -> None 
-
-    and (|FunctionParams|_|) (stream:List<Token>)  =
-        match stream with
-        | (Expression(node, PARAM_DELIMITER :: FunctionParams(next, tail))) -> Some(List.append [node] next, tail)
-        | (Expression(node, tail)) -> Some([node], tail)
-        | _ -> None
 
     let Parse (stream:List<Token>) =
         match stream with

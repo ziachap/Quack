@@ -9,15 +9,15 @@ namespace Quack.Lexer.TokenDefinitions
 
 	public class IntTokenDefinition : ITokenDefinition
 	{
-		public bool IsMatch(string term) => term == LanguageConstants.INT;
+		public bool IsMatch(string term) => term == LanguageConstants.ValueTypes.INT;
 
-		public Token GetToken(string term) => new Token(TokenType.INT, LanguageConstants.INT);
+		public Token GetToken(string term) => new Token(TokenType.INT, LanguageConstants.ValueTypes.INT);
 	}
 
 	public class BoolTokenDefinition : ITokenDefinition
 	{
-		public bool IsMatch(string term) => term == LanguageConstants.BOOL;
+		public bool IsMatch(string term) => term == LanguageConstants.ValueTypes.BOOL;
 
-		public Token GetToken(string term) => new Token(TokenType.BOOL, LanguageConstants.BOOL);
+		public Token GetToken(string term) => new Token(TokenType.BOOL, LanguageConstants.ValueTypes.BOOL);
 	}
 }

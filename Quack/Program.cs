@@ -3,6 +3,7 @@ using Ninject;
 using Quack.File;
 using Quack.Lexer;
 using Quack.Lexer.TokenDefinitions;
+using Quack.Lexer.TokenDefinitions.BooleanOperators;
 using Quack.Lexer.TokenDefinitions.BracesAndParentheses;
 using Quack.Parser;
 using Quack.Parser.LegacyParser;
@@ -65,7 +66,10 @@ namespace Quack
 			// symbols
 			kernel.Bind<ITokenDefinition>().To<AssignTokenDefinition>();
 			kernel.Bind<ITokenDefinition>().To<ArithmeticOperatorTokenDefinition>();
-			kernel.Bind<ITokenDefinition>().To<BooleanOperatorTokenDefinition>();
+			kernel.Bind<ITokenDefinition>().To<BooleanRelationalOperatorTokenDefinition>();
+			kernel.Bind<ITokenDefinition>().To<BooleanEqualityOperatorTokenDefinition>();
+			kernel.Bind<ITokenDefinition>().To<BooleanLogicOperatorTokenDefinition>();
+			kernel.Bind<ITokenDefinition>().To<BooleanPrefixOperatorTokenDefinition>();
 			kernel.Bind<ITokenDefinition>().To<ParamDelimeterTokenDefinition>();
 			kernel.Bind<ITokenDefinition>().To<StatementEndTokenDefinition>();
 

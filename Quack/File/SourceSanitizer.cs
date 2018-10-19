@@ -10,6 +10,7 @@ namespace Quack.File
 			var output = input;
 			output = PadArithmeticOperators(output);
 			output = PadBooleanOperators(output);
+			output = PadUnaryOperators(output);
 			output = PadParentheses(output);
 			output = PadBraces(output);
 			output = PadStatementEnds(output);
@@ -17,6 +18,12 @@ namespace Quack.File
 			output = RemoveNewLines(output);
 			output = ReduceWhitespace(output);
 			output = TrimWhitespace(output);
+			return output;
+		}
+
+		private static string PadUnaryOperators(string input)
+		{
+			var output = Regex.Replace(input, @"\!", " ! ");
 			return output;
 		}
 
