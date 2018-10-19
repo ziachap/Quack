@@ -114,7 +114,7 @@ namespace Quack.SemanticAnalysis
 			}
 		}
 
-		private static IDeclaration MakeDeclaration(AstNode node)
+		private IDeclaration MakeDeclaration(AstNode node)
 		{
 			switch (node.Type)
 			{
@@ -122,9 +122,11 @@ namespace Quack.SemanticAnalysis
 				//case AstNodeType.FUNC_PARAM:
 					return new VariableDeclaration(node.Value, node.TypeIdentifier);
 				case AstNodeType.FUNC_DEF:
+					var parameters = node.Children.Skip(1).ToList();
+					AssertExplicitlyTypedParameters(parameters.Select(p => p.TypeIdentifier));
 					return new FunctionDeclaration(node.Value, node.Children.First())
 					{
-						Params = new HashSet<IDeclaration>(node.Children.Skip(1).Select(MakeDeclaration))
+						Params = new HashSet<IDeclaration>(parameters.Select(MakeDeclaration))
 					};
 			}
 
@@ -149,7 +151,7 @@ namespace Quack.SemanticAnalysis
 				if (!expectedParameterNode.IsImplicitlyTyped)
 				{
 					// TODO: Lets think about what 'any' actually means and whether it belongs in function params
-					AssertTypeOrThrow(parameterNodeType, expectedParameterNode.TypeIdentifier);
+					AssertType(parameterNodeType, expectedParameterNode.TypeIdentifier);
 				}
 			}
 		}
@@ -194,13 +196,14 @@ namespace Quack.SemanticAnalysis
 			switch (expr.Type)
 			{
 				case AstNodeType.ARITHMETIC_OPERATOR:
-					AssertTypesOrThrow(expr.Children.Select(ExpressionType), LanguageConstants.ValueTypes.INT);
+					AssertTypes(expr.Children.Select(ExpressionType), LanguageConstants.ValueTypes.INT);
 					return expr.TypeIdentifier;
 				case AstNodeType.BOOLEAN_OPERATOR:
-					AssertTypesOrThrow(expr.Children.Select(ExpressionType), LanguageConstants.ValueTypes.BOOL);
+					// TODO: Need seperation between relational, equality and logic boolean operators to type check here
+					//AssertTypes(expr.Children.Select(ExpressionType), LanguageConstants.ValueTypes.BOOL);
 					return expr.TypeIdentifier;
 				case AstNodeType.BOOLEAN_UNARY_OPERATOR:
-					AssertTypeOrThrow(ExpressionType(expr.Children.Single()), LanguageConstants.ValueTypes.BOOL);
+					AssertType(ExpressionType(expr.Children.Single()), LanguageConstants.ValueTypes.BOOL);
 					return expr.TypeIdentifier;
 				case AstNodeType.BOOLEAN_CONSTANT:
 				case AstNodeType.NUMBER:
@@ -214,15 +217,28 @@ namespace Quack.SemanticAnalysis
 			}
 		}
 
-		private void AssertTypesOrThrow(IEnumerable<string> actual, string expected)
+
+		private void AssertExplicitlyTypedParameters(IEnumerable<string> parameterTypes)
 		{
-			foreach (var type in actual)
+			// TODO: this could be way nicer
+			foreach (var type in parameterTypes)
 			{
-				AssertTypeOrThrow(type, expected);
+				if (type == LanguageConstants.ValueTypes.ANY)
+				{
+					throw new Exception($"Can not use <any> in function parameter");
+				}
 			}
 		}
 
-		private void AssertTypeOrThrow(string actual, string expected)
+		private void AssertTypes(IEnumerable<string> actual, string expected)
+		{
+			foreach (var type in actual)
+			{
+				AssertType(type, expected);
+			}
+		}
+
+		private void AssertType(string actual, string expected)
 		{
 			if (expected != actual)
 			{

@@ -14,7 +14,7 @@ At the moment Quack supports:
 
 An example of Quack code:
 ```
-func printSum(declare a, declare b) {
+func printSum(int a, int b) {
 	print a + b;
 }
 
