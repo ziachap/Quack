@@ -3,13 +3,14 @@ Quack is a language I made when I was bored and decided it would be fun to make 
 
 At the moment Quack supports:
 - Scoped variable declaration and assignment
-- Numerical data
+- Variable types - any, int, bool (only limited type checking for now)
+- Functions and lambdas (no return statement yet)
+- If/else (branching)
+- While (looping)
 - Arithmetic expressions
 - Boolean expressions
 - Parentheses
-- If/else (control flow)
 - Print
-- Functions (no return statement yet)
 
 An example of Quack code:
 ```
@@ -17,8 +18,10 @@ func printSum(declare a, declare b) {
 	print a + b;
 }
 
-declare apple = 3;
-declare orange;
+func printOne() => print 1;
+
+int apple = 3;
+any orange;
 
 while (apple < 6) {
 	apple = apple + 1;
