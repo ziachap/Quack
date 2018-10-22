@@ -12,6 +12,7 @@ namespace Quack
 		public const string ELSE = "else";
 		public const string WHILE = "while";
 		public const string FUNCTION = "func";
+		public const string RETURN = "return";
 		public const string TRUE = "true";
 		public const string FALSE = "false";
 

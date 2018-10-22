@@ -12,6 +12,7 @@ namespace Quack.Lexer.TokenDefinitions
 		INT,
 		BOOL,
 		FUNC_DECLARE,
+		RETURN,
 		ASSIGN,
 		LAMBDA_OPERATOR,
 		ARITHMETIC_OPERATOR,

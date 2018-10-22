@@ -26,6 +26,7 @@ module Atoms =
     let (|ELSE|_|) (token:Token) = if token.Type = "ELSE" then Some() else None
     let (|WHILE|_|) (token:Token) = if token.Type = "WHILE" then Some() else None
     let (|FUNC_DECLARE|_|) (token:Token) = if token.Type = "FUNC_DECLARE" then Some() else None
+    let (|RETURN|_|) (token:Token) = if token.Type = "RETURN" then Some() else None
     let (|LAMBDA_OPERATOR|_|) (token:Token) = if token.Type = "LAMBDA_OPERATOR" then Some() else None
     let (|PARAM_DELIMITER|_|) (token:Token) = if token.Type = "PARAM_DELIMITER" then Some() else None
     let (|INT|_|) (token:Token) = if token.Type = "INT" then Some(token) else None
@@ -82,3 +83,9 @@ module Atoms =
                 
     let FuncInvokeNode (identifier:AstNode, funcParams:List<AstNode>) : AstNode =
         { Type = "FUNC_INVOKE"; Value = identifier.Value; TypeIdentifier = null; Children = funcParams }
+
+    let FuncReturnExpNode (exp:AstNode) : AstNode =
+        { Type = "FUNC_RETURN"; Value = null; TypeIdentifier = null; Children = [exp] }
+
+    let FuncReturnNode () : AstNode =
+        { Type = "FUNC_RETURN"; Value = null; TypeIdentifier = null; Children = [] }

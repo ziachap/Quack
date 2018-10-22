@@ -3,6 +3,10 @@ function someNumber(a){
 }
 function printSum(a, b){
   console.log(a + b);
+  return;
+}
+function getSum(a, b){
+  return a + b;
 }
 function one(){
   console.log(1);
@@ -19,4 +23,4 @@ if (!true) {
 else {
   orange = 2;
 }
-printSum(apple, orange + 1);
+console.log(getSum(apple, orange + 1));

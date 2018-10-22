@@ -74,6 +74,8 @@ namespace Quack.Transpiler
 					return FunctionDeclaration(node) + BracedEnd();
 				case AstNodeType.FUNC_INVOKE:
 					return FunctionCall(node) + StatementEnd();
+				case AstNodeType.FUNC_RETURN:
+					return FunctionReturn(node) + StatementEnd();
 				case AstNodeType.NO_OP:
 					return string.Empty;
 				default:
@@ -94,6 +96,13 @@ namespace Quack.Transpiler
 		{
 			var parameters = node.Children.Select(Expression);
 			return $"{node.Value}({string.Join(", ", parameters)})";
+		}
+
+		private string FunctionReturn(AstNode node)
+		{
+			return node.Children.Any() 
+				? "return " + Expression(node.Children.Single()) 
+				: "return";
 		}
 
 		private string Declare(AstNode node)

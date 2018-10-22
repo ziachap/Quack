@@ -1,4 +1,5 @@
 ﻿namespace Quack.Parser
+
 module public rec Parser = 
     open Types
     open Atoms
@@ -28,12 +29,18 @@ module public rec Parser =
         | PRINT :: (Expression(exp, tail)) -> Some(PrintNode(exp), tail)
         | _ -> None
        
+    let (|ReturnStatement|_|) (stream:List<Token>) =
+        match stream with
+        | RETURN :: (Expression(exp, tail)) -> Some(FuncReturnExpNode(exp), tail)
+        | RETURN :: tail -> Some(FuncReturnNode(), tail)
+        | _ -> None
+
     let rec (|StatementBlock|_|) (stream:List<Token>)  =
         match stream with
         | Statements(nodes, tail) -> Some(StatementBlockNode(nodes), tail)
         | _ -> None
       
-    let rec (|Statements|_|) (stream:List<Token>)  =
+    and (|Statements|_|) (stream:List<Token>)  =
         match stream with
         | Statement(node, []) -> Some([node], [])
         // TODO: Is there a way to get the close braces out of here and into EnclosedStatements?
@@ -48,12 +55,13 @@ module public rec Parser =
         | WhileStatement (node, tail) -> Some(node,  tail)
         | DeclareStatement (node, STATEMENT_END :: tail) -> Some(node,  tail)
         | PrintStatement (node, STATEMENT_END :: tail) -> Some(node,  tail)
+        | ReturnStatement (node, STATEMENT_END :: tail) -> Some(node,  tail)
         | AssignStatement (node, STATEMENT_END :: tail) -> Some(node,  tail)
         | FunctionInvoke (node, STATEMENT_END :: tail) -> Some(node,  tail)
         | _ -> None
     
     // CONTROL FLOW
-    and (|IfStatement|_|) (stream:List<Token>) =
+    let rec (|IfStatement|_|) (stream:List<Token>) =
         match stream with
         | IF :: (EnclosedBooleanExpression(exp, EnclosedStatements(ifStmts, ElseStatement(elseStmts, tail)))) ->
             Some(IfElseNode(exp, ifStmts, elseStmts), tail)
@@ -104,7 +112,6 @@ module public rec Parser =
         | (DeclareStatement(node, tail)) -> 
             Some([node], tail)
         | _ -> None
-        
 
     let Parse (stream:List<Token>) =
         match stream with
