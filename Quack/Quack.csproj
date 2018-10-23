@@ -56,12 +56,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Lexer\TokenDefinitions\BooleanOperators\BooleanConstantTokenDefinition.cs" />
-    <Compile Include="Lexer\TokenDefinitions\FuncDeclareTokenDefinition.cs" />
     <Compile Include="Lexer\TokenDefinitions\LambdaTokenDefinition.cs" />
     <Compile Include="Lexer\TokenDefinitions\ParamDelimeterTokenDefinition.cs" />
-    <Compile Include="Lexer\TokenDefinitions\ReturnTokenDefinition.cs" />
-    <Compile Include="Lexer\TokenDefinitions\WhileTokenDefinition.cs" />
     <Compile Include="File\FileReader.cs" />
     <Compile Include="File\FileWriter.cs" />
     <Compile Include="File\IFileReader.cs" />
@@ -74,19 +70,15 @@
     <Compile Include="Lexer\TermNotSupportedException.cs" />
     <Compile Include="Lexer\TokenDefinitions\ArithmeticOperatorTokenDefinition.cs" />
     <Compile Include="Lexer\TokenDefinitions\AssignTokenDefinition.cs" />
-    <Compile Include="Lexer\TokenDefinitions\BooleanOperators\BooleanOperatorTokenDefinition.cs" />
-    <Compile Include="Lexer\TokenDefinitions\BracesAndParentheses\CloseBracesTokenDefinition.cs" />
-    <Compile Include="Lexer\TokenDefinitions\BracesAndParentheses\CloseParenthesisTokenDefinition.cs" />
+    <Compile Include="Lexer\TokenDefinitions\BooleanDefinitions.cs" />
+    <Compile Include="Lexer\TokenDefinitions\BracketTokenDefinitions.cs" />
     <Compile Include="Lexer\TokenDefinitions\DeclareTokenDefinition.cs" />
     <Compile Include="Lexer\ILexer.cs" />
-    <Compile Include="Lexer\TokenDefinitions\ElseTokenDefinition.cs" />
-    <Compile Include="Lexer\TokenDefinitions\IfTokenDefinition.cs" />
+    <Compile Include="Lexer\TokenDefinitions\ControlFlowTokenDefinitions.cs" />
     <Compile Include="Lexer\TokenDefinitions\ITokenDefinition.cs" />
     <Compile Include="Lexer\Token.cs" />
     <Compile Include="Lexer\TokenDefinitions\NumberTokenDefinition.cs" />
-    <Compile Include="Lexer\TokenDefinitions\BracesAndParentheses\OpenBracesTokenDefinition.cs" />
-    <Compile Include="Lexer\TokenDefinitions\BracesAndParentheses\OpenParenthesisTokenDefinition.cs" />
-    <Compile Include="Lexer\TokenDefinitions\PrintTokenDefinition.cs" />
+    <Compile Include="Lexer\TokenDefinitions\KeywordTokenDefinitions.cs" />
     <Compile Include="Lexer\TokenDefinitions\StatementEndTokenDefinition.cs" />
     <Compile Include="Lexer\TokenDefinitions\IdentifierTokenDefinition.cs" />
     <Compile Include="Lexer\TokenQueue.cs" />

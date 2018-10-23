@@ -3,8 +3,6 @@ using Ninject;
 using Quack.File;
 using Quack.Lexer;
 using Quack.Lexer.TokenDefinitions;
-using Quack.Lexer.TokenDefinitions.BooleanOperators;
-using Quack.Lexer.TokenDefinitions.BracesAndParentheses;
 using Quack.Parser;
 using Quack.SemanticAnalysis;
 using Quack.SemanticValidation;
@@ -34,12 +32,7 @@ namespace Quack
 			kernel.Bind<IFileWriter>().To<FileWriter>();
 			kernel.Bind<ISourceSanitizer>().To<SourceSanitizer>();
 			kernel.Bind<ILexer>().To<Lexer.Lexer>();
-
 			kernel.Bind<IParser>().To<FunctionalParser>();
-			// LEGACY
-			//kernel.Bind<IExpressionParser>().To<ExpressionParser>();
-			//kernel.Bind<IBracketService>().To<BracketService>();
-
 			kernel.Bind<ISemanticAnalyzer>().To<SemanticAnalyzer>();
 			kernel.Bind<ITranspiler>().To<JavascriptTranspiler>();
 			BindTokenDefinitions(kernel);
@@ -75,8 +68,8 @@ namespace Quack
 			kernel.Bind<ITokenDefinition>().To<StatementEndTokenDefinition>();
 
 			// brackets
-			kernel.Bind<ITokenDefinition>().To<OpenParenthesisTokenDefinition>();
-			kernel.Bind<ITokenDefinition>().To<CloseParenthesisTokenDefinition>();
+			kernel.Bind<ITokenDefinition>().To<OpenParenthesesTokenDefinition>();
+			kernel.Bind<ITokenDefinition>().To<CloseParenthesesTokenDefinition>();
 			kernel.Bind<ITokenDefinition>().To<OpenBracesTokenDefinition>();
 			kernel.Bind<ITokenDefinition>().To<CloseBracesTokenDefinition>();
 
