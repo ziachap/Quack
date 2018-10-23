@@ -1,21 +1,19 @@
 
 func someNumber(int a) => print a + 1;
 
-
-func printSum(int a, int b) {
-	print a + b;
-	return;
-}
-
 func getSum(int a, int b) {
 	return a + b;
 }
 
-func one() => print 1;
+func printSum(int a, int b) => print getSum(a, b);
 
-any apple = 3;
+
+func one() => return 1;
+
+int apple = 3;
 any orange;
 bool testBool;
+
 
 while (apple + 1 < 6) {
 	apple = apple + 1;

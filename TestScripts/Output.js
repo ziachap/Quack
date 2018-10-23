@@ -1,15 +1,14 @@
 function someNumber(a){
   console.log(a + 1);
 }
-function printSum(a, b){
-  console.log(a + b);
-  return;
-}
 function getSum(a, b){
   return a + b;
 }
+function printSum(a, b){
+  console.log(getSum(a, b));
+}
 function one(){
-  console.log(1);
+  return 1;
 }
 var apple = 3;
 var orange;

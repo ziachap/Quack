@@ -32,7 +32,7 @@ module public rec Parser =
     let (|ReturnStatement|_|) (stream:List<Token>) =
         match stream with
         | RETURN :: (Expression(exp, tail)) -> Some(FuncReturnExpNode(exp), tail)
-        | RETURN :: tail -> Some(FuncReturnNode(), tail)
+        | RETURN :: tail -> Some(FuncReturnNode(stream.Head.Info), tail)
         | _ -> None
 
     let rec (|StatementBlock|_|) (stream:List<Token>)  =
@@ -46,7 +46,11 @@ module public rec Parser =
         // TODO: Is there a way to get the close braces out of here and into EnclosedStatements?
         | Statement(node, CLOSE_BRACES :: tail) -> Some([node], tail)
         | Statement(node, Statements(next, tail)) -> Some(List.append [node] next, tail)
-        | _ -> failwith ("Cannot parse statement starting: " + stream.Head.Type)
+        | _ -> 
+            let next = stream.Head
+            let error = "Cannot parse statement starting: " + next.Type + "\n\t[line:" + string(next.Info.LineNumber) + "] " + next.Info.Line
+            printf "%s" error
+            failwith (error)
         
     and (|Statement|_|) (stream:List<Token>)  =
         match stream with

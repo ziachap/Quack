@@ -1,12 +1,12 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
+using Quack.Lexer;
 
 namespace Quack.SemanticAnalysis.Exceptions
 {
-	public class InvalidFunctionCallException : Exception
+	public class InvalidFunctionCallException : BaseLanguageException
 	{
-		public InvalidFunctionCallException(FunctionDeclaration function)
-			: base($"Function call '{Function(function)}' has too few or too many required parameters")
+		public InvalidFunctionCallException(DebugInfo info, FunctionDeclaration function)
+			: base(info, $"Function call '{Function(function)}' has too few or too many required parameters")
 		{
 		}
 

@@ -26,15 +26,23 @@ namespace Quack.Parser
 		}
 
 		private Types.Token AsParserToken(Token token) 
-			=> new Types.Token(TokenType(token.Type), token.Value);
+			=> new Types.Token(TokenType(token.Type), token.Value, new Types.DebugInfo(token.Info.Line, token.Info.LineNumber));
 
 		private string TokenType(Enum type) => Enum.GetName(typeof(TokenType), type);
 
 		private AstNode AstNode(Types.AstNode node, AstNode parent = null)
 		{
-			var astNode = new AstNode(ParseAstNodeType(node.Type), node.Value, node.TypeIdentifier);
+			var info = new DebugInfo()
+			{
+				Line = node.Info.Line,
+				LineNumber = node.Info.LineNumber,
+			};
+
+			var astNode = new AstNode(ParseAstNodeType(node.Type), info, node.Value, node.TypeIdentifier);
+
 			astNode.Children = node.Children.Select(n => AstNode(n, astNode)).ToList();
 			astNode.Parent = parent;
+
 			return astNode;
 		}
 

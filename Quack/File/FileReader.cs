@@ -1,15 +1,17 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Quack.File
 {
 	public class FileReader : IFileReader
 	{
-		public string LoadFromFile(string path)
+		public string[] LoadFromFile(string path)
 		{
 			Console.WriteLine("--- READER ---");
-			return ReadFileToEnd(path);
+			var str = ReadFileToEnd(path);
+			return SplitLines(str);
 		}
 
 		private static string ReadFileToEnd(string path)
@@ -31,6 +33,13 @@ namespace Quack.File
 			}
 
 			return stringBuilder.ToString();
+		}
+
+
+		private string[] SplitLines(string input)
+		{
+			var normalized = Regex.Replace(input, @"(\r\n)|\r|\n", "<@>");
+			return normalized.Split(new[] { "<@>" }, StringSplitOptions.None);
 		}
 	}
 }

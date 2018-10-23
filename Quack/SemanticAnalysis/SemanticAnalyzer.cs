@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Quack.Lexer;
 using Quack.Parser;
 using Quack.SemanticAnalysis.Exceptions;
 using Quack.SemanticValidation;
@@ -91,7 +92,7 @@ namespace Quack.SemanticAnalysis
 			}
 			else
 			{
-				_declarations.PushContext();
+				_declarations.PushBlankContext();
 			}
 		}
 
@@ -100,7 +101,7 @@ namespace Quack.SemanticAnalysis
 			var identifier = node.Value;
 			if (_declarations.ExistsInScope(identifier))
 			{
-				throw new DuplicateDeclarationException(identifier);
+				throw new DuplicateDeclarationException(node.Info, identifier);
 			}
 			var declaration = MakeDeclaration(node);
 			_declarations.AddToCurrentContext(declaration);
@@ -110,7 +111,7 @@ namespace Quack.SemanticAnalysis
 		{
 			if (!_declarations.ExistsInScope(node.Value))
 			{
-				throw new IdentifierNotDeclaredException(node.Value);
+				throw new IdentifierNotDeclaredException(node.Info, node.Value);
 			}
 		}
 
@@ -139,7 +140,7 @@ namespace Quack.SemanticAnalysis
 			var functionParams = function.Params.ToArray();
 			if (functionParams.Length != functionCallNode.Children.Count)
 			{
-				throw new InvalidFunctionCallException(function);
+				throw new InvalidFunctionCallException(functionCallNode.Info, function);
 			}
 
 			// check types
@@ -151,7 +152,7 @@ namespace Quack.SemanticAnalysis
 				if (!expectedParameterNode.IsImplicitlyTyped)
 				{
 					// TODO: Lets think about what 'any' actually means and whether it belongs in function params
-					AssertType(parameterNodeType, expectedParameterNode.TypeIdentifier);
+					AssertType(parameterNode.Info, parameterNodeType, expectedParameterNode.TypeIdentifier);
 				}
 			}
 		}
@@ -161,7 +162,7 @@ namespace Quack.SemanticAnalysis
 			var expr = node.Children.First();
 			if (expr.TypeIdentifier != LanguageConstants.ValueTypes.BOOL)
 			{
-				throw new InvalidTypeException(LanguageConstants.ValueTypes.BOOL, expr.TypeIdentifier);
+				throw new InvalidTypeException(expr.Info, LanguageConstants.ValueTypes.BOOL, expr.TypeIdentifier);
 			}
 		}
 
@@ -175,7 +176,7 @@ namespace Quack.SemanticAnalysis
 			var exprTypeIdentifier = ExpressionType(expr);
 			if (exprTypeIdentifier != declaration.TypeIdentifier && !declaration.IsImplicitlyTyped)
 			{
-				throw new InvalidAssignmentTypeException(declaration, exprTypeIdentifier);
+				throw new InvalidAssignmentTypeException(identifier.Info, declaration, exprTypeIdentifier);
 			}
 			if (declaration.IsImplicitlyTyped)
 			{
@@ -196,14 +197,14 @@ namespace Quack.SemanticAnalysis
 			switch (expr.Type)
 			{
 				case AstNodeType.ARITHMETIC_OPERATOR:
-					AssertTypes(expr.Children.Select(ExpressionType), LanguageConstants.ValueTypes.INT);
+					AssertTypes(expr.Info, expr.Children.Select(ExpressionType), LanguageConstants.ValueTypes.INT);
 					return expr.TypeIdentifier;
 				case AstNodeType.BOOLEAN_OPERATOR:
 					// TODO: Need seperation between relational, equality and logic boolean operators to type check here
 					//AssertTypes(expr.Children.Select(ExpressionType), LanguageConstants.ValueTypes.BOOL);
 					return expr.TypeIdentifier;
 				case AstNodeType.BOOLEAN_UNARY_OPERATOR:
-					AssertType(ExpressionType(expr.Children.Single()), LanguageConstants.ValueTypes.BOOL);
+					AssertType(expr.Info, ExpressionType(expr.Children.Single()), LanguageConstants.ValueTypes.BOOL);
 					return expr.TypeIdentifier;
 				case AstNodeType.BOOLEAN_CONSTANT:
 				case AstNodeType.NUMBER:
@@ -212,12 +213,13 @@ namespace Quack.SemanticAnalysis
 					return ExpressionType(expr.Children.Single());
 				case AstNodeType.IDENTIFIER:
 					return LookupIdentifierType(expr);
+				case AstNodeType.FUNC_INVOKE:
+					throw new NotImplementedException();
 				default:
-					throw new Exception("Unexpected AstNodeType in expression");
+					throw new BaseLanguageException(expr.Info, "Unexpected AstNodeType in expression");
 			}
 		}
-
-
+		
 		private void AssertExplicitlyTypedParameters(IEnumerable<string> parameterTypes)
 		{
 			// TODO: this could be way nicer
@@ -230,19 +232,19 @@ namespace Quack.SemanticAnalysis
 			}
 		}
 
-		private void AssertTypes(IEnumerable<string> actual, string expected)
+		private void AssertTypes(DebugInfo info, IEnumerable<string> actual, string expected)
 		{
 			foreach (var type in actual)
 			{
-				AssertType(type, expected);
+				AssertType(info, type, expected);
 			}
 		}
 
-		private void AssertType(string actual, string expected)
+		private void AssertType(DebugInfo info, string actual, string expected)
 		{
 			if (expected != actual)
 			{
-				throw new InvalidTypeException(expected, actual);
+				throw new InvalidTypeException(info, expected, actual);
 			}
 		}
 	}

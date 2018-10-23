@@ -8,7 +8,7 @@ namespace Quack.Lexer.TokenDefinitions.BooleanOperators
 			   || term == "<"
 			   || term == "<=";
 		
-		public Token GetToken(string term) => new Token(TokenType.BOOLEAN_RELATIONAL_OPERATOR, term);
+		public Token MakeToken(string term, DebugInfo info) => new Token(TokenType.BOOLEAN_RELATIONAL_OPERATOR, info, term);
 	}
 
 	public class BooleanEqualityOperatorTokenDefinition : ITokenDefinition
@@ -16,7 +16,7 @@ namespace Quack.Lexer.TokenDefinitions.BooleanOperators
 		public bool IsMatch(string term)
 			=> term == "!=" || term == "==";
 
-		public Token GetToken(string term) => new Token(TokenType.BOOLEAN_EQUALITY_OPERATOR, term);
+		public Token MakeToken(string term, DebugInfo info) => new Token(TokenType.BOOLEAN_EQUALITY_OPERATOR, info, term);
 	}
 
 	public class BooleanLogicOperatorTokenDefinition : ITokenDefinition
@@ -24,13 +24,13 @@ namespace Quack.Lexer.TokenDefinitions.BooleanOperators
 		public bool IsMatch(string term)
 			=>  term == "&&" || term == "||";
 
-		public Token GetToken(string term) => new Token(TokenType.BOOLEAN_LOGIC_OPERATOR, term);
+		public Token MakeToken(string term, DebugInfo info) => new Token(TokenType.BOOLEAN_LOGIC_OPERATOR, info, term);
 	}
 
 	public class BooleanUnaryOperatorTokenDefinition : ITokenDefinition
 	{
 		public bool IsMatch(string term) => term == "!";
 
-		public Token GetToken(string term) => new Token(TokenType.BOOLEAN_UNARY_OPERATOR, term);
+		public Token MakeToken(string term, DebugInfo info) => new Token(TokenType.BOOLEAN_UNARY_OPERATOR, info, term);
 	}
 }

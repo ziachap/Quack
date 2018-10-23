@@ -4,6 +4,6 @@ namespace Quack.Lexer.TokenDefinitions
 	{
 		public bool IsMatch(string term) => term == LanguageConstants.LAMBDA;
 
-		public Token GetToken(string term) => new Token(TokenType.LAMBDA_OPERATOR, LanguageConstants.LAMBDA);
+		public Token MakeToken(string term, DebugInfo info) => new Token(TokenType.LAMBDA_OPERATOR, info, LanguageConstants.LAMBDA);
 	}
 }

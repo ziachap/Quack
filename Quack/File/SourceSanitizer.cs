@@ -1,25 +1,29 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace Quack.File
 {
 	public class SourceSanitizer : ISourceSanitizer
 	{
 		// TODO: Consider a scanner approach for better performance
-		public string Sanitize(string input)
+		public IEnumerable<string> Sanitize(string[] lines)
 		{
-			var output = input;
-			output = PadLambdaOperator(output);
-			output = PadArithmeticOperators(output);
-			output = PadBooleanOperators(output);
-			output = PadUnaryOperators(output);
-			output = PadParentheses(output);
-			output = PadBraces(output);
-			output = PadStatementEnds(output);
-			output = PadCommas(output);
-			output = RemoveNewLines(output);
-			output = ReduceWhitespace(output);
-			output = TrimWhitespace(output);
-			return output;
+			foreach (var line in lines)
+			{
+				var output = PadLambdaOperator(line);
+				output = PadArithmeticOperators(output);
+				output = PadBooleanOperators(output);
+				output = PadUnaryOperators(output);
+				output = PadParentheses(output);
+				output = PadBraces(output);
+				output = PadStatementEnds(output);
+				output = PadCommas(output);
+				output = RemoveTabs(output);
+				output = ReduceWhitespace(output);
+				output = TrimWhitespace(output);
+				yield return output;
+			}
 		}
 
 		private static string PadUnaryOperators(string input)
@@ -74,9 +78,9 @@ namespace Quack.File
 			return Regex.Replace(input, @",", " , ");
 		}
 
-		private static string RemoveNewLines(string input)
+		private static string RemoveTabs(string input)
 		{
-			return Regex.Replace(input, @"\t|\n|\r", " ");
+			return Regex.Replace(input, @"\t", "");
 		}
 
 		private static string ReduceWhitespace(string input)

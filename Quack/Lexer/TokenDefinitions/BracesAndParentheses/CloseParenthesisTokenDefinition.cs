@@ -4,6 +4,6 @@ namespace Quack.Lexer.TokenDefinitions.BracesAndParentheses
 	{
 		public bool IsMatch(string term) => term == ")";
 
-		public Token GetToken(string term) => new Token(TokenType.CLOSE_PARENTHESES, term);
+		public Token MakeToken(string term, DebugInfo info) => new Token(TokenType.CLOSE_PARENTHESES, info, term);
 	}
 }

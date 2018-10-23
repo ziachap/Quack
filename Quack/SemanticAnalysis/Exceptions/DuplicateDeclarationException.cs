@@ -1,11 +1,12 @@
 ﻿using System;
+using Quack.Lexer;
 
 namespace Quack.SemanticAnalysis.Exceptions
 {
-	public class DuplicateDeclarationException : Exception
+	public class DuplicateDeclarationException : BaseLanguageException
 	{
-		public DuplicateDeclarationException(string identifier) 
-			: base($"Identifier '{identifier}' has already been declared")
+		public DuplicateDeclarationException(DebugInfo info, string identifier) 
+			: base(info, $"Identifier '{identifier}' has already been declared")
 		{
 		}
 	}

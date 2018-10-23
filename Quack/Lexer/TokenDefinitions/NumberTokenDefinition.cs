@@ -8,6 +8,6 @@ namespace Quack.Lexer.TokenDefinitions
 
 		public bool IsMatch(string term) => Regex.Match(term, NumberRegex).Success;
 
-		public Token GetToken(string term) => new Token(TokenType.NUMBER, term);
+		public Token MakeToken(string term, DebugInfo info) => new Token(TokenType.NUMBER, info, term);
 	}
 }

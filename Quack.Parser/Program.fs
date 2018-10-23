@@ -12,7 +12,7 @@ module internal Program =
         Indentation <- Indentation + 2
         node.Children |> List.iter (PrintNode)
         Indentation <- Indentation - 2
-
+        (*
     //[<EntryPoint>]
     let main argv =
         let testTokens = [ 
@@ -42,3 +42,4 @@ module internal Program =
 
         0 // Return an integer exit code
 
+        *)

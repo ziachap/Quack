@@ -1,11 +1,12 @@
 ﻿using System;
+using Quack.Lexer;
 
 namespace Quack.SemanticAnalysis.Exceptions
 {
-	public class IdentifierNotDeclaredException : Exception
+	public class IdentifierNotDeclaredException : BaseLanguageException
 	{
-		public IdentifierNotDeclaredException(string identifier)
-			: base($"Identifier '{identifier}' has not been declared")
+		public IdentifierNotDeclaredException(DebugInfo info, string identifier)
+			: base(info, $"Identifier '{identifier}' has not been declared")
 		{
 		}
 	}

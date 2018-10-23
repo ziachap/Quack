@@ -16,6 +16,9 @@ FUNC_DECLARE (identifier)
 	FUNC_PARAM?
 	...
 
+RETURN
+	EXP?
+
 VAR_DECLARE
 	ASSIGN | LABEL
 

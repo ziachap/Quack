@@ -14,27 +14,49 @@ namespace Quack.Lexer
 			_tokenDefinitions = tokenDefinitions;
 		}
 
-		public TokenQueue Tokenise(string input)
+		public TokenQueue Tokenise(string[] sanitizedLines, string[] sourceLines)
 		{
 			Console.WriteLine("--- LEXER ---");
 
-			var splitInput = input.Split(' ');
 
 			var tokenQueue = new TokenQueue();
 
-			foreach (var term in splitInput)
+			for (var i = 0; i < sanitizedLines.Count(); i++)
 			{
-				var tokenDefinition = _tokenDefinitions.FirstOrDefault(x => x.IsMatch(term));
+				var line = sanitizedLines[i];
 
-				if (tokenDefinition == null)
+				if (string.IsNullOrWhiteSpace(line)) continue;
+
+				var splitInput = line.Split(' ');
+
+				foreach (var term in splitInput)
 				{
-					throw new TermNotSupportedException($"The term '{term}' could not be tokenised");
+					var tokenDefinition = _tokenDefinitions.FirstOrDefault(x => x.IsMatch(term));
+
+					if (tokenDefinition == null)
+					{
+						throw new TermNotSupportedException($"The term '{term}' could not be tokenised");
+					}
+
+					var info = new DebugInfo()
+					{
+						Line = sourceLines[i],
+						LineNumber = i + 1
+					};
+
+					tokenQueue.Enqueue(tokenDefinition.MakeToken(term, info));
 				}
-				
-				tokenQueue.Enqueue(tokenDefinition.GetToken(term));
 			}
+
+			
 
 			return tokenQueue;
 		}
+	}
+
+	public class DebugInfo
+	{
+		public string Line { get; set; }
+		public int LineNumber { get; set; }
 	}
 }

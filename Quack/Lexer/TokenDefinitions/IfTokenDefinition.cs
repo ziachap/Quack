@@ -4,6 +4,6 @@ namespace Quack.Lexer.TokenDefinitions
 	{
 		public bool IsMatch(string term) => term == LanguageConstants.IF;
 
-		public Token GetToken(string term) => new Token(TokenType.IF);
+		public Token MakeToken(string term, DebugInfo info) => new Token(TokenType.IF, info);
 	}
 }

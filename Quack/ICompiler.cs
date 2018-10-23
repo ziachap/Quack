@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Quack.File;
 using Quack.Lexer;
 using Quack.Parser;
@@ -43,18 +44,12 @@ namespace Quack
 		{
 			//var input = "declare a; a = 5; print a;";
 			
-			var input = _reader.LoadFromFile(filePath);
+			var sourceLines = _reader.LoadFromFile(filePath);
+			var sanitizedLines = _sanitizer.Sanitize(sourceLines).ToArray();
 
 			Console.WriteLine("Loaded from " + filePath);
-			Console.WriteLine("Source code:");
-			Console.WriteLine(input);
-
-			var sanitizedInput = _sanitizer.Sanitize(input);
-
-			Console.WriteLine("Sanitized source code:");
-			Console.WriteLine(sanitizedInput);
-
-			var tokens = _lexer.Tokenise(sanitizedInput);
+			
+			var tokens = _lexer.Tokenise(sanitizedLines, sourceLines);
 			foreach (var token in tokens)
 			{
 				Console.WriteLine($"    {token}");

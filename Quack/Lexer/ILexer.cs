@@ -2,6 +2,6 @@ namespace Quack.Lexer
 {
 	public interface ILexer
 	{
-		TokenQueue Tokenise(string input);
+		TokenQueue Tokenise(string[] sanitizedLines, string[] sourceLines);
 	}
 }

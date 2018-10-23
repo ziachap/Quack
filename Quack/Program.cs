@@ -6,8 +6,6 @@ using Quack.Lexer.TokenDefinitions;
 using Quack.Lexer.TokenDefinitions.BooleanOperators;
 using Quack.Lexer.TokenDefinitions.BracesAndParentheses;
 using Quack.Parser;
-using Quack.Parser.LegacyParser;
-using Quack.Parser.LegacyParser.Brackets;
 using Quack.SemanticAnalysis;
 using Quack.SemanticValidation;
 using Quack.Transpiler;
@@ -82,7 +80,7 @@ namespace Quack
 			kernel.Bind<ITokenDefinition>().To<OpenBracesTokenDefinition>();
 			kernel.Bind<ITokenDefinition>().To<CloseBracesTokenDefinition>();
 
-			// identifiers/values
+			// identifiers/numbers
 			kernel.Bind<ITokenDefinition>().To<NumberTokenDefinition>();
 			kernel.Bind<ITokenDefinition>().To<IdentifierTokenDefinition>();
 		}

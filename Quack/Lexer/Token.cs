@@ -6,14 +6,16 @@ namespace Quack.Lexer
 {
 	public class Token
 	{
-		public Token(TokenType type, string value = null)
+		public Token(TokenType type, DebugInfo info, string value = null)
 		{
 			Type = type;
+			Info = info;
 			Value = value;
 		}
 
 		public TokenType Type { get; }
 		public string Value { get; }
+		public DebugInfo Info { get; }
 
 		public override string ToString()
 		{

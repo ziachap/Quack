@@ -4,6 +4,6 @@ namespace Quack.Lexer.TokenDefinitions
 	{
 		public bool IsMatch(string term) =>  term == "+" || term == "-" || term == "*" || term == "/";
 
-		public Token GetToken(string term) => new Token(TokenType.ARITHMETIC_OPERATOR, term);
+		public Token MakeToken(string term, DebugInfo info) => new Token(TokenType.ARITHMETIC_OPERATOR, info, term);
 	}
 }

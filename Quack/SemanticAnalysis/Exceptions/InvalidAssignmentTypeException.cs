@@ -1,19 +1,20 @@
 ﻿using System;
+using Quack.Lexer;
 
 namespace Quack.SemanticAnalysis.Exceptions
 {
-	public class InvalidAssignmentTypeException : Exception
+	public class InvalidAssignmentTypeException : BaseLanguageException
 	{
-		public InvalidAssignmentTypeException(VariableDeclaration declaration, string actual)
-			: base($"Attempted to assign type <{actual}> to variable of type <{declaration.TypeIdentifier}> for '{declaration.Value}'")
+		public InvalidAssignmentTypeException(DebugInfo info, VariableDeclaration declaration, string actual)
+			: base(info, $"Attempted to assign type <{actual}> to variable of type <{declaration.TypeIdentifier}> for '{declaration.Value}'")
 		{
 		}
 	}
 
-	public class InvalidTypeException : Exception
+	public class InvalidTypeException : BaseLanguageException
 	{
-		public InvalidTypeException(string expected, string actual)
-			: base($"Expected type <{expected}> but got type <{actual}>")
+		public InvalidTypeException(DebugInfo info, string expected, string actual)
+			: base(info, $"Expected type <{expected}> but got type <{actual}>")
 		{
 		}
 	}

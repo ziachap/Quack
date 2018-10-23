@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Quack.Lexer;
 using Quack.SemanticAnalysis.Exceptions;
 
 namespace Quack.SemanticAnalysis
@@ -18,7 +19,7 @@ namespace Quack.SemanticAnalysis
 			_contexts.Peek().Declarations.Add(declaration);
 		}
 
-		public void PushContext(string name = null)
+		public void PushBlankContext(string name = null)
 		{
 			var context = new DeclarationContext(name, new HashSet<IDeclaration>());
 			PushContext(context);
@@ -30,7 +31,8 @@ namespace Quack.SemanticAnalysis
 			{
 				if (ExistsInScope(scopeDeclaration.Value))
 				{
-					throw new DuplicateDeclarationException(scopeDeclaration.Value);
+					// TODO: Need DebugInfo in here
+					throw new DuplicateDeclarationException(new DebugInfo(), scopeDeclaration.Value);
 				}
 			}
 

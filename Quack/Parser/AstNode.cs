@@ -1,24 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using Quack.Lexer;
 
 namespace Quack.Parser
 {
 	public class AstNode
 	{
-		public AstNode(AstNodeType type, string value = null, string typeIdentifier = null)
+		public AstNode(AstNodeType type, DebugInfo info, string value = null, string typeIdentifier = null)
 		{
 			Type = type;
+			Info = info;
 			TypeIdentifier = typeIdentifier;
 			Value = value;
 			Children = new List<AstNode>();
-		}
-
-		public AstNode(AstNodeType type, string value, string typeIdentifier, List<AstNode> children)
-		{
-			Type = type;
-			Value = value;
-			Children = children;
-			TypeIdentifier = typeIdentifier;
 		}
 
 		// Backward compatibility
@@ -33,6 +27,7 @@ namespace Quack.Parser
 		public AstNodeType Type { get; }
 		public string Value { get; }
 		public string TypeIdentifier { get; }
+		public DebugInfo Info { get; }
 		public List<AstNode> Children { get; set; }
 		public AstNode Parent { get; set; }
 		

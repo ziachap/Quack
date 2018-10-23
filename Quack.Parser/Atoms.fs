@@ -34,58 +34,58 @@ module Atoms =
 
     (* Ast Nodes *)
     let NumberNode (number:Token) : AstNode =
-        { Type = "NUMBER"; Value = number.Value; TypeIdentifier = "int"; Children = [] }
+        { Type = "NUMBER"; Value = number.Value; TypeIdentifier = "int"; Children = []; Info = number.Info }
 
     let BooleanConstantNode (boolean:Token) : AstNode =
-        { Type = "BOOLEAN_CONSTANT"; Value = boolean.Value; TypeIdentifier = "bool"; Children = [] }
+        { Type = "BOOLEAN_CONSTANT"; Value = boolean.Value; TypeIdentifier = "bool"; Children = []; Info = boolean.Info }
 
     let IdentifierNode (identifier:Token) : AstNode =
-        { Type = "IDENTIFIER"; Value = identifier.Value; TypeIdentifier = null; Children = [] }
+        { Type = "IDENTIFIER"; Value = identifier.Value; TypeIdentifier = null; Children = []; Info = identifier.Info }
         
     let TypeIdentifierNode (identifier:Token) : AstNode =
-        { Type = "TYPE_IDENTIFIER"; Value = identifier.Value; TypeIdentifier = null; Children = [] }
+        { Type = "TYPE_IDENTIFIER"; Value = identifier.Value; TypeIdentifier = null; Children = []; Info = identifier.Info }
 
     let DeclareNode (child:AstNode, typeNode:AstNode) : AstNode =
-        { Type = "DECLARE"; Value = child.Value; TypeIdentifier = typeNode.Value; Children = [child] }
+        { Type = "DECLARE"; Value = child.Value; TypeIdentifier = typeNode.Value; Children = [child]; Info = typeNode.Info }
 
     let ArithmeticNode (left:AstNode, op:Token, right:AstNode) : AstNode =
-        { Type = "ARITHMETIC_OPERATOR"; Value = op.Value; TypeIdentifier = "int"; Children = [left; right] }
+        { Type = "ARITHMETIC_OPERATOR"; Value = op.Value; TypeIdentifier = "int"; Children = [left; right]; Info = left.Info }
         
     let BooleanNode (left:AstNode, op:Token, right:AstNode) : AstNode =
-        { Type = "BOOLEAN_OPERATOR"; Value = op.Value; TypeIdentifier = "bool"; Children = [left; right] }
+        { Type = "BOOLEAN_OPERATOR"; Value = op.Value; TypeIdentifier = "bool"; Children = [left; right]; Info = left.Info }
 
     let BooleanUnaryNode (op:Token, node:AstNode) : AstNode =
-        { Type = "BOOLEAN_UNARY_OPERATOR"; Value = op.Value; TypeIdentifier = "bool"; Children = [node] }
+        { Type = "BOOLEAN_UNARY_OPERATOR"; Value = op.Value; TypeIdentifier = "bool"; Children = [node]; Info = op.Info }
 
     let FactorNode (exp:AstNode) : AstNode =
-        { Type = "FACTOR"; Value = null; TypeIdentifier = null; Children = [exp] }
+        { Type = "FACTOR"; Value = null; TypeIdentifier = null; Children = [exp]; Info = exp.Info }
         
     let PrintNode (exp:AstNode) : AstNode =
-        { Type = "PRINT"; Value = null; TypeIdentifier = null; Children = [exp] }
+        { Type = "PRINT"; Value = null; TypeIdentifier = null; Children = [exp]; Info = exp.Info }
 
     let AssignNode (identifier:AstNode, exp:AstNode) : AstNode =
-        { Type = "ASSIGN"; Value = identifier.Value; TypeIdentifier = null; Children = [identifier; exp] }
+        { Type = "ASSIGN"; Value = identifier.Value; TypeIdentifier = null; Children = [identifier; exp]; Info = identifier.Info }
         
     let StatementBlockNode (statements:List<AstNode>) : AstNode =
-        { Type = "STATEMENT_BLOCK"; Value = null; TypeIdentifier = null; Children = statements }
+        { Type = "STATEMENT_BLOCK"; Value = null; TypeIdentifier = null; Children = statements; Info = statements.Head.Info }
                     
     let IfNode (exp:AstNode, ifStatements:AstNode) : AstNode =
-        { Type = "IF_ELSE"; Value = null; TypeIdentifier = null; Children = [exp; ifStatements] }
+        { Type = "IF_ELSE"; Value = null; TypeIdentifier = null; Children = [exp; ifStatements]; Info = exp.Info }
         
     let IfElseNode (exp:AstNode, ifStatements:AstNode, elseStatements:AstNode) : AstNode =
-        { Type = "IF_ELSE"; Value = null; TypeIdentifier = null; Children = [exp; ifStatements;  elseStatements] }
+        { Type = "IF_ELSE"; Value = null; TypeIdentifier = null; Children = [exp; ifStatements;  elseStatements]; Info = exp.Info }
 
     let WhileNode (exp:AstNode, whileStatements:AstNode) : AstNode =
-        { Type = "WHILE"; Value = null; TypeIdentifier = null; Children = [exp; whileStatements] }
+        { Type = "WHILE"; Value = null; TypeIdentifier = null; Children = [exp; whileStatements]; Info = exp.Info }
 
     let FuncDefNode (identifier:AstNode, funcStatements:AstNode, funcParams:List<AstNode>) : AstNode =
-        { Type = "FUNC_DEF"; Value = identifier.Value; TypeIdentifier = null; Children = List.append [funcStatements] funcParams }
+        { Type = "FUNC_DEF"; Value = identifier.Value; TypeIdentifier = null; Children = List.append [funcStatements] funcParams; Info = identifier.Info }
                 
     let FuncInvokeNode (identifier:AstNode, funcParams:List<AstNode>) : AstNode =
-        { Type = "FUNC_INVOKE"; Value = identifier.Value; TypeIdentifier = null; Children = funcParams }
+        { Type = "FUNC_INVOKE"; Value = identifier.Value; TypeIdentifier = null; Children = funcParams; Info = identifier.Info }
 
     let FuncReturnExpNode (exp:AstNode) : AstNode =
-        { Type = "FUNC_RETURN"; Value = null; TypeIdentifier = null; Children = [exp] }
+        { Type = "FUNC_RETURN"; Value = null; TypeIdentifier = null; Children = [exp]; Info = exp.Info }
 
-    let FuncReturnNode () : AstNode =
-        { Type = "FUNC_RETURN"; Value = null; TypeIdentifier = null; Children = [] }
+    let FuncReturnNode (info:DebugInfo) : AstNode =
+        { Type = "FUNC_RETURN"; Value = null; TypeIdentifier = null; Children = []; Info = info }

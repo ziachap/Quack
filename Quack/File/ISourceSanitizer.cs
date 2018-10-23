@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Quack.File
 {
 	public interface ISourceSanitizer
 	{
-		string Sanitize(string input);
+		IEnumerable<string> Sanitize(string[] lines);
 	}
 }

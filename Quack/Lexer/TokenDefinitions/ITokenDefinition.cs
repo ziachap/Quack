@@ -3,7 +3,7 @@ namespace Quack.Lexer.TokenDefinitions
 	public interface ITokenDefinition
 	{
 		bool IsMatch(string term);
-		Token GetToken(string term);
+		Token MakeToken(string term, DebugInfo info);
 	}
 
 	public enum TokenType
