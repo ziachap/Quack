@@ -62,8 +62,6 @@
     <Compile Include="Lexer\TokenDefinitions\ParamDelimeterTokenDefinition.cs" />
     <Compile Include="Lexer\TokenDefinitions\ReturnTokenDefinition.cs" />
     <Compile Include="Lexer\TokenDefinitions\WhileTokenDefinition.cs" />
-    <Compile Include="Parser\LegacyParser\Brackets\BracketService.cs" />
-    <Compile Include="Parser\LegacyParser\Brackets\BracketSets.cs" />
     <Compile Include="File\FileReader.cs" />
     <Compile Include="File\FileWriter.cs" />
     <Compile Include="File\IFileReader.cs" />
@@ -92,14 +90,10 @@
     <Compile Include="Lexer\TokenDefinitions\StatementEndTokenDefinition.cs" />
     <Compile Include="Lexer\TokenDefinitions\IdentifierTokenDefinition.cs" />
     <Compile Include="Lexer\TokenQueue.cs" />
-    <Compile Include="Parser\LegacyParser\ExpressionParser.cs" />
     <Compile Include="Parser\AstNode.cs" />
     <Compile Include="Parser\FunctionalParser.cs" />
-    <Compile Include="Parser\LegacyParser\IExpressionParser.cs" />
-    <Compile Include="Parser\LegacyParser\Brackets\IBracketService.cs" />
     <Compile Include="Parser\IParser.cs" />
     <Compile Include="Parser\ParseException.cs" />
-    <Compile Include="Parser\LegacyParser\LegacyParser.cs" />
     <Compile Include="SemanticAnalysis\DeclarationStore.cs" />
     <Compile Include="SemanticAnalysis\Exceptions\InvalidAssignmentTypeException.cs" />
     <Compile Include="SemanticAnalysis\Exceptions\InvalidFunctionCallException.cs" />
@@ -125,9 +119,7 @@
       <Name>Quack.Parser</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Parser\Brackets\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
