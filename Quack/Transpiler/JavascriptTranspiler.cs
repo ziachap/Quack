@@ -22,13 +22,12 @@ namespace Quack.Transpiler
 		{
 			Console.WriteLine("--- Transpiler (JavaScript) ---");
 
-			// This is for declaring all functions at start of file
-			//_output.Append(FunctionDeclarations(analysedAst.FunctionDeclarations));
 			_output.Append(Statements(analysedAst.EntryNode));
 
 			return _output.ToString();
 		}
 
+		// TODO: Perhaps lets get rid of this now?
 		private string AllFunctionDeclarations(IEnumerable<IDeclaration> declarations)
 		{
 			var functionOutputs = declarations

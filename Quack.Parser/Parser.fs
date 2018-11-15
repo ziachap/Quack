@@ -46,11 +46,7 @@ module public rec Parser =
         // TODO: Is there a way to get the close braces out of here and into EnclosedStatements?
         | Statement(node, CLOSE_BRACES :: tail) -> Some([node], tail)
         | Statement(node, Statements(next, tail)) -> Some(List.append [node] next, tail)
-        | _ -> 
-            let next = stream.Head
-            let error = "Cannot parse statement starting: " + next.Type + "\n\t[line:" + string(next.Info.LineNumber) + "] " + next.Info.Line
-            printf "%s" error
-            failwith (error)
+        | _ -> raise (new ParseException(stream.Head))
         
     and (|Statement|_|) (stream:List<Token>)  =
         match stream with

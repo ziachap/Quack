@@ -1,5 +1,6 @@
 ﻿namespace Quack.Parser
 module Types = 
+    open System
 
     type DebugInfo = 
         {
@@ -22,3 +23,7 @@ module Types =
             Children:List<AstNode>
             Info:DebugInfo
         }
+
+    type ParseException (token:Token) = 
+        inherit Exception("Cannot parse statement starting: " + token.Type 
+        + "\n\t[line:" + string(token.Info.LineNumber) + "] " + token.Info.Line)
