@@ -1,4 +1,4 @@
-﻿using Quack.SemanticValidation;
+﻿using Quack.SemanticAnalysis;
 
 namespace Quack.Transpiler
 {

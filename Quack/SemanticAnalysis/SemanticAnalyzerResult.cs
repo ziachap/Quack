@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using Quack.Parser;
-using Quack.SemanticAnalysis;
 
-namespace Quack.SemanticValidation
+namespace Quack.SemanticAnalysis
 {
 	public class SemanticAnalyzerResult
 	{

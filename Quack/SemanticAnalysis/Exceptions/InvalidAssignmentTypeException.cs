@@ -13,8 +13,8 @@ namespace Quack.SemanticAnalysis.Exceptions
 
 	public class InvalidTypeException : BaseLanguageException
 	{
-		public InvalidTypeException(DebugInfo info, string expected, string actual)
-			: base(info, $"Expected type <{expected}> but got type <{actual}>")
+		public InvalidTypeException(DebugInfo info, string actual, params string[] expectedTypes)
+			: base(info, $"Expected type <{string.Join(">|<", expectedTypes)}> but got type <{actual}>")
 		{
 		}
 	}

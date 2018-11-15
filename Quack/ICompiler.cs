@@ -56,11 +56,13 @@ namespace Quack
 			}
 
 			var ast = _parser.Parse(tokens);
+
 			PrintAstTree(ast);
 
 			var analyzedAst = _semanticValidator.Analyze(ast);
 
 			var transpiledCode = _transpiler.Transpile(analyzedAst);
+
 			Console.WriteLine(transpiledCode);
 
 			var outputPath = "C:/working.git/Quack/TestScripts";

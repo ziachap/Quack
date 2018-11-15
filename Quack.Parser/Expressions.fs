@@ -35,19 +35,19 @@ module Expressions =
     
     and (|BooleanLogicExpression|_|) (stream:List<Token>)  =
         match stream with
-        | BooleanEqualityExpression(left, BOOLEAN_LOGIC_OPERATOR op :: (BooleanEqualityExpression(right, tail))) -> Some(BooleanNode(left, op, right), tail)
+        | BooleanEqualityExpression(left, BOOLEAN_LOGIC_OPERATOR op :: (BooleanEqualityExpression(right, tail))) -> Some(BooleanLogicNode(left, op, right), tail)
         | BooleanEqualityExpression(node, tail) -> Some(node, tail)
         | _ -> None
     
     and (|BooleanEqualityExpression|_|) (stream:List<Token>)  =
         match stream with
-        | BooleanRelationalExpression(left, BOOLEAN_EQUALITY_OPERATOR op :: (BooleanRelationalExpression(right, tail))) -> Some(BooleanNode(left, op, right), tail)
+        | BooleanRelationalExpression(left, BOOLEAN_EQUALITY_OPERATOR op :: (BooleanRelationalExpression(right, tail))) -> Some(BooleanEqualityNode(left, op, right), tail)
         | BooleanRelationalExpression(node, tail) -> Some(node, tail)
         | _ -> None
 
     and (|BooleanRelationalExpression|_|) (stream:List<Token>)  =
         match stream with
-        | ArithmeticExpression(left, BOOLEAN_RELATIONAL_OPERATOR op :: (ArithmeticExpression(right, tail))) -> Some(BooleanNode(left, op, right), tail)
+        | ArithmeticExpression(left, BOOLEAN_RELATIONAL_OPERATOR op :: (ArithmeticExpression(right, tail))) -> Some(BooleanRelationalNode(left, op, right), tail)
         | ArithmeticExpression(node, tail) -> Some(node, tail)
         | _ -> None
         

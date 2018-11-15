@@ -1,5 +1,4 @@
 ﻿using Quack.Parser;
-using Quack.SemanticValidation;
 
 namespace Quack.SemanticAnalysis
 {

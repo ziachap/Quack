@@ -48,15 +48,7 @@ namespace Quack.Lexer
 				}
 			}
 
-			
-
 			return tokenQueue;
 		}
-	}
-
-	public class DebugInfo
-	{
-		public string Line { get; set; }
-		public int LineNumber { get; set; }
 	}
 }

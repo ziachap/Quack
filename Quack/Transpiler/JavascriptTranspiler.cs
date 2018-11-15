@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using Quack.Parser;
 using Quack.SemanticAnalysis;
-using Quack.SemanticValidation;
 
 namespace Quack.Transpiler
 {
@@ -171,7 +170,9 @@ namespace Quack.Transpiler
 				case AstNodeType.FUNC_INVOKE:
 					return FunctionCall(node);
 				case AstNodeType.ARITHMETIC_OPERATOR:
-				case AstNodeType.BOOLEAN_OPERATOR:
+				case AstNodeType.BOOLEAN_RELATIONAL_OPERATOR:
+				case AstNodeType.BOOLEAN_EQUALITY_OPERATOR:
+				case AstNodeType.BOOLEAN_LOGIC_OPERATOR:
 					return Operation(node);
 				case AstNodeType.BOOLEAN_UNARY_OPERATOR:
 					return UnaryOperation(node);

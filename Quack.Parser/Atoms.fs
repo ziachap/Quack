@@ -51,8 +51,14 @@ module Atoms =
     let ArithmeticNode (left:AstNode, op:Token, right:AstNode) : AstNode =
         { Type = "ARITHMETIC_OPERATOR"; Value = op.Value; TypeIdentifier = "int"; Children = [left; right]; Info = left.Info }
         
-    let BooleanNode (left:AstNode, op:Token, right:AstNode) : AstNode =
-        { Type = "BOOLEAN_OPERATOR"; Value = op.Value; TypeIdentifier = "bool"; Children = [left; right]; Info = left.Info }
+    let BooleanRelationalNode (left:AstNode, op:Token, right:AstNode) : AstNode =
+        { Type = "BOOLEAN_RELATIONAL_OPERATOR"; Value = op.Value; TypeIdentifier = "bool"; Children = [left; right]; Info = left.Info }
+        
+    let BooleanEqualityNode (left:AstNode, op:Token, right:AstNode) : AstNode =
+        { Type = "BOOLEAN_EQUALITY_OPERATOR"; Value = op.Value; TypeIdentifier = "bool"; Children = [left; right]; Info = left.Info }
+
+    let BooleanLogicNode (left:AstNode, op:Token, right:AstNode) : AstNode =
+        { Type = "BOOLEAN_LOGIC_OPERATOR"; Value = op.Value; TypeIdentifier = "bool"; Children = [left; right]; Info = left.Info }
 
     let BooleanUnaryNode (op:Token, node:AstNode) : AstNode =
         { Type = "BOOLEAN_UNARY_OPERATOR"; Value = op.Value; TypeIdentifier = "bool"; Children = [node]; Info = op.Info }

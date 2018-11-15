@@ -1,20 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Quack.Lexer;
 using Quack.Parser;
 using Quack.SemanticAnalysis.Exceptions;
-using Quack.SemanticValidation;
 
 namespace Quack.SemanticAnalysis
 {
 	public class SemanticAnalyzer : ISemanticAnalyzer
 	{
 		private readonly DeclarationStore _declarations;
+		private readonly IExpressionEvaluator _expressionEvaluator;
+		private readonly ITypeComparer _typeComparer;
 
-		public SemanticAnalyzer()
+		public SemanticAnalyzer(DeclarationStore declarations, IExpressionEvaluator expressionEvaluator, ITypeComparer typeComparer)
 		{
-			_declarations = new DeclarationStore();
+			_declarations = declarations;
+			_expressionEvaluator = expressionEvaluator;
+			_typeComparer = typeComparer;
 		}
 
 		public SemanticAnalyzerResult Analyze(AstNode node)
@@ -61,22 +63,24 @@ namespace Quack.SemanticAnalysis
 					Declaration(node);
 					break;
 				case AstNodeType.IDENTIFIER:
-					VerifyDeclarationExists(node);
+					_declarations.AssertDeclarationExists(node);
 					break;
 				case AstNodeType.FUNC_INVOKE:
-					VerifyDeclarationExists(node);
-					VerifyHasRequiredParameters(node);
+					_declarations.AssertDeclarationExists(node);
+					AssertHasRequiredParameters(node);
 					break;
 				case AstNodeType.ASSIGN:
-					VerifyValidTypeforAssignment(node);
+					AssertValidTypeforAssignment(node);
 					break;
 				case AstNodeType.IF_ELSE:
-					VerifyBranchExpressionIsBoolean(node);
+					AssertBranchExpressionIsBoolean(node);
 					break;
-				case AstNodeType.BOOLEAN_OPERATOR:
+				case AstNodeType.BOOLEAN_RELATIONAL_OPERATOR:
+				case AstNodeType.BOOLEAN_EQUALITY_OPERATOR:
+				case AstNodeType.BOOLEAN_LOGIC_OPERATOR:
 				case AstNodeType.ARITHMETIC_OPERATOR:
 				case AstNodeType.BOOLEAN_UNARY_OPERATOR:
-					ExpressionType(node);
+					_expressionEvaluator.Type(node);
 					break;
 			}
 		}
@@ -107,14 +111,6 @@ namespace Quack.SemanticAnalysis
 			_declarations.AddToCurrentContext(declaration);
 		}
 
-		private void VerifyDeclarationExists(AstNode node)
-		{
-			if (!_declarations.ExistsInScope(node.Value))
-			{
-				throw new IdentifierNotDeclaredException(node.Info, node.Value);
-			}
-		}
-
 		private IDeclaration MakeDeclaration(AstNode node)
 		{
 			switch (node.Type)
@@ -129,12 +125,12 @@ namespace Quack.SemanticAnalysis
 					{
 						Params = new HashSet<IDeclaration>(parameters.Select(MakeDeclaration))
 					};
+				default:
+					throw new Exception($"AstNode {node} is not a function or variable declaration");
 			}
-
-			throw new Exception($"AstNode {node} is not a function or variable declaration");
 		}
 
-		private void VerifyHasRequiredParameters(AstNode functionCallNode)
+		private void AssertHasRequiredParameters(AstNode functionCallNode)
 		{
 			var function = (FunctionDeclaration)_declarations.FindDeclaration(functionCallNode.Value);
 			var functionParams = function.Params.ToArray();
@@ -147,17 +143,17 @@ namespace Quack.SemanticAnalysis
 			for (var i = 0; i < functionCallNode.Children.Count; i++)
 			{
 				var parameterNode = functionCallNode.Children[i];
-				var parameterNodeType = ExpressionType(parameterNode);
+				var parameterNodeType = _expressionEvaluator.Type(parameterNode);
 				var expectedParameterNode = (VariableDeclaration)functionParams[i];
 				if (!expectedParameterNode.IsImplicitlyTyped)
 				{
 					// TODO: Lets think about what 'any' actually means and whether it belongs in function params
-					AssertType(parameterNode.Info, parameterNodeType, expectedParameterNode.TypeIdentifier);
+					_typeComparer.AssertType(parameterNode.Info, parameterNodeType, expectedParameterNode.TypeIdentifier);
 				}
 			}
 		}
 
-		private void VerifyBranchExpressionIsBoolean(AstNode node)
+		private void AssertBranchExpressionIsBoolean(AstNode node)
 		{
 			var expr = node.Children.First();
 			if (expr.TypeIdentifier != LanguageConstants.ValueTypes.BOOL)
@@ -166,14 +162,14 @@ namespace Quack.SemanticAnalysis
 			}
 		}
 
-		private void VerifyValidTypeforAssignment(AstNode node)
+		private void AssertValidTypeforAssignment(AstNode node)
 		{
 			var identifier = node.Children.First();
-			VerifyDeclarationExists(identifier);
+			_declarations.AssertDeclarationExists(identifier);
 			var declaration = (VariableDeclaration)_declarations.FindDeclaration(identifier.Value);
 
 			var expr = node.Children.ElementAt(1);
-			var exprTypeIdentifier = ExpressionType(expr);
+			var exprTypeIdentifier = _expressionEvaluator.Type(expr);
 			if (exprTypeIdentifier != declaration.TypeIdentifier && !declaration.IsImplicitlyTyped)
 			{
 				throw new InvalidAssignmentTypeException(identifier.Info, declaration, exprTypeIdentifier);
@@ -181,42 +177,6 @@ namespace Quack.SemanticAnalysis
 			if (declaration.IsImplicitlyTyped)
 			{
 				declaration.ImplicitSetType(exprTypeIdentifier);
-			}
-		}
-
-		private string LookupIdentifierType(AstNode identifier)
-		{
-			VerifyDeclarationExists(identifier);
-			var declaration = (VariableDeclaration)_declarations.FindDeclaration(identifier.Value);
-			return declaration.TypeIdentifier;
-		}
-
-		// TODO: Move this expression type evaluation out somewhere
-		private string ExpressionType(AstNode expr)
-		{
-			switch (expr.Type)
-			{
-				case AstNodeType.ARITHMETIC_OPERATOR:
-					AssertTypes(expr.Info, expr.Children.Select(ExpressionType), LanguageConstants.ValueTypes.INT);
-					return expr.TypeIdentifier;
-				case AstNodeType.BOOLEAN_OPERATOR:
-					// TODO: Need seperation between relational, equality and logic boolean operators to type check here
-					//AssertTypes(expr.Children.Select(ExpressionType), LanguageConstants.ValueTypes.BOOL);
-					return expr.TypeIdentifier;
-				case AstNodeType.BOOLEAN_UNARY_OPERATOR:
-					AssertType(expr.Info, ExpressionType(expr.Children.Single()), LanguageConstants.ValueTypes.BOOL);
-					return expr.TypeIdentifier;
-				case AstNodeType.BOOLEAN_CONSTANT:
-				case AstNodeType.NUMBER:
-					return expr.TypeIdentifier;
-				case AstNodeType.FACTOR:
-					return ExpressionType(expr.Children.Single());
-				case AstNodeType.IDENTIFIER:
-					return LookupIdentifierType(expr);
-				case AstNodeType.FUNC_INVOKE:
-					throw new NotImplementedException();
-				default:
-					throw new BaseLanguageException(expr.Info, "Unexpected AstNodeType in expression");
 			}
 		}
 		
@@ -229,22 +189,6 @@ namespace Quack.SemanticAnalysis
 				{
 					throw new Exception($"Can not use <any> in function parameter");
 				}
-			}
-		}
-
-		private void AssertTypes(DebugInfo info, IEnumerable<string> actual, string expected)
-		{
-			foreach (var type in actual)
-			{
-				AssertType(info, type, expected);
-			}
-		}
-
-		private void AssertType(DebugInfo info, string actual, string expected)
-		{
-			if (expected != actual)
-			{
-				throw new InvalidTypeException(info, expected, actual);
 			}
 		}
 	}

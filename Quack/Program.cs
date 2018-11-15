@@ -5,7 +5,6 @@ using Quack.Lexer;
 using Quack.Lexer.TokenDefinitions;
 using Quack.Parser;
 using Quack.SemanticAnalysis;
-using Quack.SemanticValidation;
 using Quack.Transpiler;
 
 namespace Quack
@@ -31,10 +30,18 @@ namespace Quack
 			kernel.Bind<IFileReader>().To<FileReader>();
 			kernel.Bind<IFileWriter>().To<FileWriter>();
 			kernel.Bind<ISourceSanitizer>().To<SourceSanitizer>();
+
 			kernel.Bind<ILexer>().To<Lexer.Lexer>();
+
 			kernel.Bind<IParser>().To<FunctionalParser>();
+
+			kernel.Bind<DeclarationStore>().To<DeclarationStore>().InSingletonScope();
 			kernel.Bind<ISemanticAnalyzer>().To<SemanticAnalyzer>();
+			kernel.Bind<IExpressionEvaluator>().To<ExpressionEvaluator>();
+			kernel.Bind<ITypeComparer>().To<TypeComparer>();
+
 			kernel.Bind<ITranspiler>().To<JavascriptTranspiler>();
+
 			BindTokenDefinitions(kernel);
 
 			return kernel;

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Quack.Lexer;
+using Quack.Parser;
 using Quack.SemanticAnalysis.Exceptions;
 
 namespace Quack.SemanticAnalysis
@@ -52,6 +53,14 @@ namespace Quack.SemanticAnalysis
 		public IDeclaration FindDeclaration(string value)
 		{
 			return _contexts.SelectMany(s => s.Declarations).Single(x => x.ValueEquals(value));
+		}
+
+		public void AssertDeclarationExists(AstNode node)
+		{
+			if (!ExistsInScope(node.Value))
+			{
+				throw new IdentifierNotDeclaredException(node.Info, node.Value);
+			}
 		}
 	}
 
