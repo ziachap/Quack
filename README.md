@@ -39,4 +39,4 @@ printSum(apple, orange + 1);
 
 Quack code is transpiled into JavaScript code. I plan on adding more transpilation targets in the future and perhaps even compilation!
 
-![alt tag](http://i64.tinypic.com/2mrumnc.jpg)
+![alt tag](https://media.istockphoto.com/vectors/yellow-duck-icon-vector-id1127302688?k=20&m=1127302688&s=612x612&w=0&h=r_xH78JAJ8XBwKWriHZSKWUB7qgk2g4MDSz8ewPTRGY=)
